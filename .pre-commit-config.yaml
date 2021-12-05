@@ -1,0 +1,31 @@
+repos:
+    - repo: https://github.com/pre-commit/pre-commit-hooks
+      rev: v4.0.1
+      hooks:
+        - id: check-yaml
+          args: [--unsafe]
+          exclude: '.*templates.*.yaml'
+        - id: end-of-file-fixer
+          exclude: 'CHANGELOG.md'
+        - id: trailing-whitespace
+          exclude: 'CHANGELOG.md'
+        - id: check-ast
+    - repo: https://github.com/gruntwork-io/pre-commit
+      rev: v0.1.12
+      hooks:
+        - id: shellcheck
+    - repo: https://github.com/psf/black
+      rev: 21.8b0
+      hooks:
+        - id: black
+    - repo: https://github.com/pycqa/isort
+      rev: 5.9.3
+      hooks:
+        - id: isort
+          name: isort (python)
+        - id: isort
+          name: isort (cython)
+          types: [cython]
+        - id: isort
+          name: isort (pyi)
+          types: [pyi]

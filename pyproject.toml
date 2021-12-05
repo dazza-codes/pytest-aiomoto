@@ -1,0 +1,79 @@
+[tool.poetry]
+name = "pytest-aiomoto"
+version = "0.1.0"
+description = "pytest-aiomoto"
+authors = [
+    "Darren Weber <dazza-codes@github.com>",
+]
+license = "Apache-2.0"
+
+readme = "README.md"
+repository = "https://github.com/dazza-codes/pytest-aiomoto.git"
+homepage = "https://github.com/dazza-codes/pytest-aiomoto"
+
+keywords = [
+    "Development Status :: 2 - Pre-Alpha",
+    "Intended Audience :: Developers",
+    "Operating System :: OS Independent",
+    "Framework :: Pytest",
+    "Intended Audience :: Developers",
+    "Topic :: Software Development :: Testing",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3 :: Only",
+    "License :: OSI Approved :: Apache Software License",
+]
+
+include = ["pytest_aiomoto/**/*"]
+exclude = ["tests/**/*"]
+
+packages = [
+    {include = "pytest_aiomoto"}
+]
+
+
+[tool.poetry.plugins]
+[tool.poetry.plugins."pytest11"]
+"aiomoto" = "pytest_aiomoto"
+
+
+[tool.poetry.dependencies]
+python = "^3.7"
+
+pytest = "^6.2.5"
+pytest-asyncio = "^0.14.0"
+
+# Try to update to the latest aiobotocore
+aiobotocore = {version = "~2.0.0", extras = ["boto3"]}
+moto = {version = "^2.0.0", extras = ["all","server"]}
+
+aiofiles = {version = "^0.7.0"}
+requests = "^2.23.0"
+
+
+[tool.poetry.extras]
+
+
+[tool.poetry.dev-dependencies]
+
+# py-dev-deps is used as a common denominator for many
+# development dependencies
+py-dev-deps = "^0.2"
+
+mkdocs = "^1.2.3"
+mkdocs-material = "^8.0.1"
+mkdocstrings = "^0.16.2"
+
+
+[tool.isort]
+profile = "black"
+force_single_line = true
+
+
+[build-system]
+requires = ["poetry>=1.0"]
+build-backend = "poetry.masonry.api"
