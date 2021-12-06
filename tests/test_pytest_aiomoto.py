@@ -12,6 +12,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from types import ModuleType
+
+import pytest_aiomoto
 import pytest_aiomoto.version
 
-VERSION = pytest_aiomoto.version.__version__
+
+def test_aio_aws_package():
+    assert isinstance(pytest_aiomoto, ModuleType)
+    assert isinstance(pytest_aiomoto.version, ModuleType)
+
+
+def test_aio_aws_version():
+    assert pytest_aiomoto.VERSION == pytest_aiomoto.version.__version__

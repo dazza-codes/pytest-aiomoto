@@ -5,7 +5,7 @@ SHELL = /bin/bash
 .ONESHELL:
 .SUFFIXES:
 
-LIB = aiomoto
+LIB = pytest_aiomoto
 
 .PHONY: clean
 clean:
@@ -46,13 +46,7 @@ lint: clean
 
 .PHONY: test
 test: clean
-	@poetry run pytest \
-		--durations=10 \
-		--show-capture=no \
-		--cov-config .coveragerc \
-		--cov-report html \
-		--cov-report term \
-		--cov=$(LIB) tests
+	@poetry run coverage run --source=$(LIB) -m pytest && poetry run coverage report
 
 .PHONY: typehint
 typehint: clean
@@ -74,8 +68,7 @@ package-publish: package-check
 .PHONY: poetry
 poetry:
 	@if ! command -v poetry > /dev/null; then \
-		curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/install-poetry.py -o /tmp/install-poetry.py; \
-		python /tmp/install-poetry.py; \
+        curl -sSL https://install.python-poetry.org | python -
 	fi
 	if ! echo "$PATH" | grep -Eq "(^|:)${HOME}/.local/bin($|:)" ; then \
 		export PATH="${HOME}/.local/bin:${PATH}"; \
