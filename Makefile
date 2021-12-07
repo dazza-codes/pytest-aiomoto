@@ -18,11 +18,9 @@ clean:
 
 .PHONY: docs
 docs: clean
-	@cd docs
-	@rm -rf _build
-	@poetry run make html
-	@poetry run doc8
-	@echo -e "\033[95m\n\nBuild successful! View the docs homepage at docs/_build/html/index.html.\n\033[0m"
+	@rm -rf site
+	@poetry run mkdocs build
+	@echo -e "\033[95m\n\nBuild successful! View docs with 'mkdocs serve'\n\033[0m"
 
 .PHONY: flake8
 flake8: clean
@@ -37,7 +35,7 @@ init: poetry
 	@poetry env info
 	[[ -f pip.conf ]] && cp pip.conf $$(poetry env info -p)
 	poetry run python -m pip install --upgrade pip
-	poetry install -v --no-interaction #--extras all
+	poetry install -v --no-interaction --extras docs
 
 .PHONY: lint
 lint: clean
