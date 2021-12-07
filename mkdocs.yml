@@ -7,9 +7,10 @@ nav:
   - Home: index.md
   - Code Reference:
     - AioMoto Fixtures: aiomoto_fixtures.md
+    - Moto Fixtures: moto_fixtures.md
 
 theme:
-  name: "material"
+  name: material
 
 plugins:
 - search
