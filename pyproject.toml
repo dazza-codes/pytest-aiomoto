@@ -38,7 +38,7 @@ packages = [
 
 [tool.poetry.plugins]
 [tool.poetry.plugins."pytest11"]
-"aiomoto" = "pytest_aiomoto"
+"aiomoto" = "pytest_aiomoto.plugin"
 
 
 [tool.poetry.dependencies]
@@ -48,7 +48,7 @@ pytest = "^6.2.5"
 pytest-asyncio = "^0.14.0"
 
 # Try to update to the latest aiobotocore
-aiobotocore = {version = "~2.0.0", extras = ["boto3"]}
+aiobotocore = {version = "^2.0.0", extras = ["boto3"]}
 moto = {version = "^2.0.0", extras = ["all","server"]}
 
 aiofiles = {version = "^0.7.0"}
