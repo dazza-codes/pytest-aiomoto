@@ -11,7 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
+import uuid
 from typing import List
 
 import pytest
@@ -24,8 +24,7 @@ def aio_s3_bucket_name() -> str:
     """A valid S3 bucket name
     :return: str for the bucket component of 's3://{bucket}/{key}'
     """
-    # TODO: use a random UUID for a bucket name
-    return "aio-moto-bucket"
+    return f"aio-moto-bucket-{uuid.uuid4()}"
 
 
 @pytest.fixture
