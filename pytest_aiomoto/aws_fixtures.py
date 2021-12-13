@@ -1,4 +1,4 @@
-# Copyright 2019-2021 Darren Weber
+# Copyright 2020 Darren Weber
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -25,9 +25,11 @@ according to the moto license.
     - https://github.com/spulec/moto/pull/1197/files
     - https://github.com/spulec/moto/blob/master/tests/test_batch/test_batch.py
 """
+import json
 import os
 import uuid
 from itertools import chain
+from pathlib import Path
 from typing import List
 from typing import NamedTuple
 from typing import Optional
@@ -38,11 +40,15 @@ import pytest
 from botocore.client import BaseClient
 from botocore.exceptions import ClientError
 from moto import mock_batch
+from moto import mock_cognitoidp
 from moto import mock_ec2
 from moto import mock_ecs
 from moto import mock_iam
 from moto import mock_logs
 from moto import mock_s3
+from moto import mock_secretsmanager
+from moto import mock_sqs
+from s3fs import S3FileSystem
 
 from pytest_aiomoto.s3_object import S3Object
 from pytest_aiomoto.utils import AWS_ACCESS_KEY_ID
@@ -54,12 +60,16 @@ from pytest_aiomoto.utils import assert_status_code
 from pytest_aiomoto.utils import has_moto_mocks
 from pytest_aiomoto.utils import response_success
 
+# import moto.settings
+# moto.settings.TEST_SERVER_MODE = True
+
 
 @pytest.fixture
 def aws_host(monkeypatch):
     host = os.getenv("AWS_HOST", AWS_HOST)
     monkeypatch.setenv("AWS_HOST", host)
     yield
+    monkeypatch.delenv("AWS_HOST", raising=False)
 
 
 @pytest.fixture
@@ -67,6 +77,7 @@ def aws_port(monkeypatch):
     port = os.getenv("AWS_PORT", AWS_PORT)
     monkeypatch.setenv("AWS_PORT", port)
     yield
+    monkeypatch.delenv("AWS_PORT", raising=False)
 
 
 @pytest.fixture
@@ -77,9 +88,25 @@ def aws_proxy(aws_host, aws_port, monkeypatch):
 
 
 @pytest.fixture
-def aws_region(monkeypatch):
+def aws_region(monkeypatch) -> str:
     monkeypatch.setenv("AWS_DEFAULT_REGION", AWS_REGION)
     yield AWS_REGION
+    monkeypatch.delenv("AWS_DEFAULT_REGION", raising=False)
+
+
+@pytest.fixture
+def aws_region_us_west_2(monkeypatch) -> str:
+    region = "us-west-2"
+    monkeypatch.setenv("AWS_DEFAULT_REGION", region)
+    yield region
+    monkeypatch.delenv("AWS_DEFAULT_REGION", raising=False)
+
+
+@pytest.fixture
+def aws_region_us_east_1(monkeypatch) -> str:
+    region = "us-east-1"
+    monkeypatch.setenv("AWS_DEFAULT_REGION", region)
+    yield region
     monkeypatch.delenv("AWS_DEFAULT_REGION", raising=False)
 
 
@@ -87,17 +114,23 @@ def aws_region(monkeypatch):
 def aws_credentials(aws_region, monkeypatch):
     """Mocked AWS Credentials for moto."""
     boto3.DEFAULT_SESSION = None
-    # monkeypatch.setenv("AWS_DEFAULT_PROFILE", "testing")
-    # monkeypatch.setenv("AWS_PROFILE", "testing")
+    S3FileSystem.clear_instance_cache()
+    monkeypatch.delenv("AWS_DEFAULT_PROFILE", raising=False)
+    monkeypatch.delenv("AWS_PROFILE", raising=False)
     monkeypatch.setenv("AWS_ACCESS_KEY_ID", AWS_ACCESS_KEY_ID)
     monkeypatch.setenv("AWS_SECRET_ACCESS_KEY", AWS_SECRET_ACCESS_KEY)
     monkeypatch.setenv("AWS_SECURITY_TOKEN", "testing")
     monkeypatch.setenv("AWS_SESSION_TOKEN", "testing")
+
     yield
+
+    monkeypatch.delenv("AWS_DEFAULT_PROFILE", raising=False)
+    monkeypatch.delenv("AWS_DEFAULT_REGION", raising=False)
+    monkeypatch.delenv("AWS_ACCOUNT", raising=False)
     monkeypatch.delenv("AWS_ACCESS_KEY_ID", raising=False)
     monkeypatch.delenv("AWS_SECRET_ACCESS_KEY", raising=False)
-    monkeypatch.delenv("AWS_SECURITY_TOKEN", raising=False)
-    monkeypatch.delenv("AWS_SESSION_TOKEN", raising=False)
+    boto3.DEFAULT_SESSION = None
+    S3FileSystem.clear_instance_cache()
 
 
 @pytest.fixture(scope="session")
@@ -160,6 +193,49 @@ def aws_s3_client(aws_region):
 def aws_s3_resource(aws_region):
     with mock_s3():
         yield boto3.resource("s3", region_name=aws_region)
+
+
+@pytest.fixture
+def aws_secrets_client(aws_region):
+    with mock_secretsmanager():
+        yield boto3.client("secretsmanager", region_name=aws_region)
+
+
+@pytest.fixture
+def aws_sqs_client(aws_region):
+    with mock_sqs():
+        yield boto3.client("sqs", region_name=aws_region)
+
+
+@pytest.fixture
+def aws_sqs_resource(aws_region):
+    with mock_sqs():
+        yield boto3.resource("sqs", region_name=aws_region)
+
+
+@pytest.fixture
+def aws_cognito_client(aws_region):
+    # https://github.com/spulec/moto/blob/master/tests/test_cognitoidp/test_cognitoidp.py
+    with mock_cognitoidp():
+        yield boto3.client("cognito-idp", region_name=aws_region)
+
+
+@pytest.fixture
+def aws_cognito_pool(cognito_moto_client, aws_region):
+    name = str(uuid.uuid4())
+    value = str(uuid.uuid4())
+    response = cognito_moto_client.create_user_pool(
+        PoolName=name, LambdaConfig={"PreSignUp": value}
+    )
+    yield response
+
+
+@pytest.fixture
+def aws_cognito_pool_client(cognito_moto_client, cognito_moto_pool):
+    user_pool_id = cognito_moto_pool["UserPool"]["Id"]
+    yield cognito_moto_client.create_user_pool_client(
+        UserPoolId=user_pool_id, ClientName=str(uuid.uuid4())
+    )
 
 
 ##################################################################
@@ -293,6 +369,16 @@ def delete_s3_prefix(s3_client, bucket_name, prefix):
     except ClientError as err:
         print(f"COULD NOT CLEANUP S3 PREFIX: s3://{bucket_name}/{prefix}")
         print(err)
+
+
+@pytest.fixture
+def s3_event_json():
+    # TODO: override the bucket in the s3 event to use a moto-bucket
+    #       - Records -> s3 -> bucket: name and arn
+    #       - maybe override the s3-object data with an actual moto s3 object?
+    json_path = Path(__file__).parent / "s3_event.json"
+    json_text = json_path.read_text()
+    return json.loads(json_text)
 
 
 @pytest.fixture
