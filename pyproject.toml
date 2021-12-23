@@ -75,7 +75,7 @@ s3fs = ["s3fs"]
 
 # py-dev-deps is used as a common denominator for many
 # development dependencies
-py-dev-deps = "^0.2"
+py-dev-deps = "^0.3.0"
 
 # Add dev dependencies for testing projects with the
 # fixtures available from this project
