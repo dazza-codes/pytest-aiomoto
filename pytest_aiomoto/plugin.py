@@ -1,5 +1,6 @@
 
 pytest_plugins = [
+    "pytest_aiomoto.aws_credentials",
     "pytest_aiomoto.aws_fixtures",
     "pytest_aiomoto.aiomoto_fixtures",
     "pytest_aiomoto.aiomoto_lambda",
