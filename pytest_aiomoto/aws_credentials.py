@@ -25,6 +25,10 @@ import pytest
 from botocore.exceptions import ProfileNotFound
 from s3fs import S3FileSystem
 
+from pytest_aiomoto.utils import AWS_ACCESS_KEY_ID
+from pytest_aiomoto.utils import AWS_REGION
+from pytest_aiomoto.utils import AWS_SECRET_ACCESS_KEY
+
 
 def clean_aws_credentials(monkeypatch):
     # See https://github.com/dask/s3fs/issues/461 for details about
@@ -48,7 +52,7 @@ def setup_aws_credentials(profile_name, aws_region, monkeypatch) -> boto3.sessio
     monkeypatch.setenv("AWS_DEFAULT_REGION", aws_region)
     session = boto3.Session(profile_name=profile_name, region_name=aws_region)
     credentials = session.get_credentials().get_frozen_credentials()
-    monkeypatch.setenv("AWS_PROFILE", session.profile_name)  # GDAL >= 3.2
+    monkeypatch.setenv("AWS_PROFILE", session.profile_name)
     monkeypatch.setenv("AWS_DEFAULT_PROFILE", session.profile_name)
     monkeypatch.setenv("AWS_DEFAULT_REGION", session.region_name)
     monkeypatch.setenv("AWS_ACCESS_KEY_ID", credentials.access_key)
@@ -88,10 +92,23 @@ def default_profile(monkeypatch) -> Dict:
     mock a default profile key:value pairs
     """
     return {
-        "aws_access_key_id": "testing_access_key_id",
-        "aws_secret_access_key": "testing_secret_access_key",
-        "region": "us-east-1",
+        "aws_access_key_id": AWS_ACCESS_KEY_ID,
+        "aws_secret_access_key": AWS_SECRET_ACCESS_KEY,
+        "region": AWS_REGION
     }
+
+
+@pytest.fixture
+def default_profile_ini(default_profile) -> str:
+    """
+    A [default] entry block for a ~/.aws/credentials file
+    """
+    return f"""
+    [default]
+    aws_access_key_id = {default_profile["aws_access_key_id"]}
+    aws_secret_access_key =  {default_profile["aws_secret_access_key"]}
+    region = {default_profile["region"]}
+    """
 
 
 @pytest.fixture
@@ -140,6 +157,24 @@ def mock_default_credentials(default_profile, mocker, monkeypatch) -> Dict:
         # Skip for missing credentials
         clean_aws_credentials(monkeypatch)
         pytest.skip(f"Missing AWS credentials ({profile_name}), skipping test")
+
+    finally:
+        clean_aws_credentials(monkeypatch)
+
+
+@pytest.fixture
+def aws_credentials(aws_region, monkeypatch):
+    """Mocked AWS Credentials for moto."""
+    try:
+        clean_aws_credentials(monkeypatch)
+
+        monkeypatch.setenv("AWS_ACCESS_KEY_ID", AWS_ACCESS_KEY_ID)
+        monkeypatch.setenv("AWS_SECRET_ACCESS_KEY", AWS_SECRET_ACCESS_KEY)
+        monkeypatch.setenv("AWS_SECURITY_TOKEN", "testing")
+        monkeypatch.setenv("AWS_SESSION_TOKEN", "testing")
+
+        yield
+        clean_aws_credentials(monkeypatch)
 
     finally:
         clean_aws_credentials(monkeypatch)

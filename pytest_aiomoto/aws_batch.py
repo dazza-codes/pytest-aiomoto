@@ -12,61 +12,50 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""
-AWS test fixtures for AWS Batch
-
-This test suite uses a large suite of moto mocks for the AWS batch
-infrastructure. The infrastructure mocks are derived from the moto test
-suite for testing the batch client. The test infrastructure should be used
-according to the moto license. That license overrides any global license
-applied to the pytest-aiomoto project.
-
-.. seealso::
-
-    - https://github.com/spulec/moto/pull/1197/files
-    - https://github.com/spulec/moto/blob/master/tests/test_batch/test_batch.py
-"""
-
-from typing import NamedTuple
 from typing import Optional
 
-from aiobotocore.client import AioBaseClient
+import pytest
 
-from pytest_aiomoto.utils import AWS_REGION
-
-
-class AioBatchClient(AioBaseClient):
-    pass
+from pytest_aiomoto.aws_clients import AwsBatchClients
 
 
-class AioEC2Client(AioBaseClient):
-    pass
+@pytest.fixture
+def aws_batch_clients(
+    aws_batch_client,
+    aws_ec2_client,
+    aws_ecs_client,
+    aws_iam_client,
+    aws_logs_client,
+    aws_region,
+):
+    return AwsBatchClients(
+        batch=aws_batch_client,
+        ec2=aws_ec2_client,
+        ecs=aws_ecs_client,
+        iam=aws_iam_client,
+        logs=aws_logs_client,
+        region=aws_region,
+    )
 
 
-class AioECSClient(AioBaseClient):
-    pass
+@pytest.fixture(scope="session")
+def job_queue_name():
+    return "moto_test_job_queue"
 
 
-class AioIAMClient(AioBaseClient):
-    pass
+@pytest.fixture(scope="session")
+def job_definition_name():
+    return "moto_test_job_definition"
 
 
-class AioCloudWatchLogsClient(AioBaseClient):
-    pass
+@pytest.fixture(scope="session")
+def compute_env_name():
+    return "moto_test_compute_env"
 
 
-class AioAwsBatchClients(NamedTuple):
-    batch: AioBatchClient
-    ec2: AioEC2Client
-    ecs: AioECSClient
-    iam: AioIAMClient
-    logs: AioCloudWatchLogsClient
-    region: str
-
-
-class AioAwsBatchInfrastructure:
-    aio_aws_clients: AioAwsBatchClients
-    aws_region: str = AWS_REGION
+class AwsBatchInfrastructure:
+    aws_region: str
+    aws_clients: AwsBatchClients
     vpc_id: Optional[str] = None
     subnet_id: Optional[str] = None
     security_group_id: Optional[str] = None
@@ -79,13 +68,12 @@ class AioAwsBatchInfrastructure:
     job_definition_arn: Optional[str] = None
 
 
-async def aio_batch_infrastructure(
-    aio_aws_batch_clients: AioAwsBatchClients,
-    aws_region: str,
+def batch_infrastructure(
+    aws_clients: AwsBatchClients,
     compute_env_name: str,
     job_queue_name: str,
     job_definition_name: str,
-) -> AioAwsBatchInfrastructure:
+) -> AwsBatchInfrastructure:
     """
     Create AWS Batch infrastructure, including:
     - VPC with subnet
@@ -98,29 +86,31 @@ async def aio_batch_infrastructure(
     the duration of a test.
     """
 
-    infrastructure = AioAwsBatchInfrastructure()
-    infrastructure.aws_region = aws_region
-    infrastructure.aio_aws_clients = aio_aws_batch_clients
+    infrastructure = AwsBatchInfrastructure()
+    infrastructure.aws_region = aws_clients.region
+    infrastructure.aws_clients = aws_clients
 
-    resp = await aio_aws_batch_clients.ec2.create_vpc(CidrBlock="172.30.0.0/24")
+    resp = aws_clients.ec2.create_vpc(CidrBlock="172.30.0.0/24")
     vpc_id = resp["Vpc"]["VpcId"]
 
-    resp = await aio_aws_batch_clients.ec2.create_subnet(
-        AvailabilityZone=f"{aws_region}a", CidrBlock="172.30.0.0/25", VpcId=vpc_id
+    resp = aws_clients.ec2.create_subnet(
+        AvailabilityZone=f"{aws_clients.region}a",
+        CidrBlock="172.30.0.0/25",
+        VpcId=vpc_id,
     )
     subnet_id = resp["Subnet"]["SubnetId"]
 
-    resp = await aio_aws_batch_clients.ec2.create_security_group(
+    resp = aws_clients.ec2.create_security_group(
         Description="moto_test_sg_desc", GroupName="moto_test_sg", VpcId=vpc_id
     )
     sg_id = resp["GroupId"]
 
-    resp = await aio_aws_batch_clients.iam.create_role(
+    resp = aws_clients.iam.create_role(
         RoleName="MotoTestRole", AssumeRolePolicyDocument="moto_test_policy"
     )
     iam_arn = resp["Role"]["Arn"]
 
-    resp = await aio_aws_batch_clients.batch.create_compute_environment(
+    resp = aws_clients.batch.create_compute_environment(
         computeEnvironmentName=compute_env_name,
         type="UNMANAGED",
         state="ENABLED",
@@ -128,7 +118,7 @@ async def aio_batch_infrastructure(
     )
     compute_env_arn = resp["computeEnvironmentArn"]
 
-    resp = await aio_aws_batch_clients.batch.create_job_queue(
+    resp = aws_clients.batch.create_job_queue(
         jobQueueName=job_queue_name,
         state="ENABLED",
         priority=123,
@@ -138,14 +128,14 @@ async def aio_batch_infrastructure(
     assert resp["jobQueueArn"]
     job_queue_arn = resp["jobQueueArn"]
 
-    resp = await aio_aws_batch_clients.batch.register_job_definition(
+    resp = aws_clients.batch.register_job_definition(
         jobDefinitionName=job_definition_name,
         type="container",
         containerProperties={
-            "image": "alpine",
-            "vcpus": 1,
+            "image": "busybox",
+            "vcpus": 2,
             "memory": 8,
-            "command": ["sleep", "2"],  # NOTE: job runs for 2 sec without overrides
+            "command": ["sleep", "10"],  # NOTE: job runs for 10 sec without overrides
         },
     )
     assert resp["jobDefinitionName"] == job_definition_name
