@@ -34,14 +34,14 @@ from aiobotocore.session import get_session
 from pytest_aiomoto.aiomoto_batch import AioAwsBatchClients
 from pytest_aiomoto.aiomoto_batch import AioAwsBatchInfrastructure
 from pytest_aiomoto.aiomoto_batch import aio_batch_infrastructure
-from pytest_aiomoto.aiomoto_services import MotoService
+from pytest_aiomoto.aiomoto_services import AioMotoService
 from pytest_aiomoto.utils import AWS_ACCESS_KEY_ID
 from pytest_aiomoto.utils import AWS_SECRET_ACCESS_KEY
 
 
 @pytest.fixture
 async def aio_aws_batch_server():
-    async with MotoService("batch") as svc:
+    async with AioMotoService("batch") as svc:
         svc.reset()
         yield svc.endpoint_url
         svc.reset()
@@ -49,7 +49,7 @@ async def aio_aws_batch_server():
 
 @pytest.fixture
 async def aio_aws_cloudformation_server():
-    async with MotoService("cloudformation") as svc:
+    async with AioMotoService("cloudformation") as svc:
         svc.reset()
         yield svc.endpoint_url
         svc.reset()
@@ -57,7 +57,7 @@ async def aio_aws_cloudformation_server():
 
 @pytest.fixture
 async def aio_aws_ec2_server():
-    async with MotoService("ec2") as svc:
+    async with AioMotoService("ec2") as svc:
         svc.reset()
         yield svc.endpoint_url
         svc.reset()
@@ -65,7 +65,7 @@ async def aio_aws_ec2_server():
 
 @pytest.fixture
 async def aio_aws_ecs_server():
-    async with MotoService("ecs") as svc:
+    async with AioMotoService("ecs") as svc:
         svc.reset()
         yield svc.endpoint_url
         svc.reset()
@@ -73,7 +73,7 @@ async def aio_aws_ecs_server():
 
 @pytest.fixture
 async def aio_aws_iam_server():
-    async with MotoService("iam") as svc:
+    async with AioMotoService("iam") as svc:
         svc.reset()
         yield svc.endpoint_url
         svc.reset()
@@ -81,7 +81,7 @@ async def aio_aws_iam_server():
 
 @pytest.fixture
 async def aio_aws_dynamodb2_server():
-    async with MotoService("dynamodb2") as svc:
+    async with AioMotoService("dynamodb2") as svc:
         svc.reset()
         yield svc.endpoint_url
         svc.reset()
@@ -89,7 +89,7 @@ async def aio_aws_dynamodb2_server():
 
 @pytest.fixture
 async def aio_aws_lambda_server():
-    async with MotoService("lambda") as svc:
+    async with AioMotoService("lambda") as svc:
         svc.reset()
         yield svc.endpoint_url
         svc.reset()
@@ -98,7 +98,7 @@ async def aio_aws_lambda_server():
 @pytest.fixture
 async def aio_aws_logs_server():
     # cloud watch logs
-    async with MotoService("logs") as svc:
+    async with AioMotoService("logs") as svc:
         svc.reset()
         yield svc.endpoint_url
         svc.reset()
@@ -106,7 +106,7 @@ async def aio_aws_logs_server():
 
 @pytest.fixture
 async def aio_aws_s3_server():
-    async with MotoService("s3") as svc:
+    async with AioMotoService("s3") as svc:
         svc.reset()
         yield svc.endpoint_url
         svc.reset()
@@ -114,7 +114,7 @@ async def aio_aws_s3_server():
 
 @pytest.fixture
 async def aio_aws_sns_server():
-    async with MotoService("sns") as svc:
+    async with AioMotoService("sns") as svc:
         svc.reset()
         yield svc.endpoint_url
         svc.reset()
@@ -122,7 +122,7 @@ async def aio_aws_sns_server():
 
 @pytest.fixture
 async def aio_aws_sqs_server():
-    async with MotoService("sqs") as svc:
+    async with AioMotoService("sqs") as svc:
         svc.reset()
         yield svc.endpoint_url
         svc.reset()
@@ -163,7 +163,7 @@ def aio_aws_session(aws_credentials, aws_region, event_loop):
 @pytest.fixture
 def aio_aws_client(aio_aws_session):
     async def _get_client(service_name):
-        async with MotoService(service_name) as srv:
+        async with AioMotoService(service_name) as srv:
             async with aio_aws_session.create_client(
                 service_name, endpoint_url=srv.endpoint_url
             ) as client:

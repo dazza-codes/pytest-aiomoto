@@ -14,17 +14,38 @@
 
 import functools
 import logging
+import os
 import threading
 import time
 
+import moto.backends
+import moto.server
 import urllib3
 import werkzeug.serving
 
-from pytest_aiomoto.moto_service_utils import CONNECT_TIMEOUT
-from pytest_aiomoto.moto_service_utils import moto_service_app
-from pytest_aiomoto.moto_service_utils import moto_service_reset
 from pytest_aiomoto.utils import AWS_HOST
 from pytest_aiomoto.utils import get_free_tcp_port
+
+_PYCHARM_HOSTED = os.environ.get("PYCHARM_HOSTED") == "1"
+CONNECT_TIMEOUT = 90 if _PYCHARM_HOSTED else 10
+
+
+def moto_service_reset(service_name: str):
+    """
+    Reset a moto service backend, for all regions.
+    Each service can have multiple regional backends.
+    """
+    service_backends = moto.backends.get_backend(service_name)
+    for region_name, backend in service_backends.items():
+        backend.reset()
+
+
+def moto_service_app(service_name: str):
+    app = moto.server.DomainDispatcherApplication(
+        moto.server.create_backend_app, service=service_name
+    )
+    app.debug = True
+    return app
 
 
 class MotoService:
@@ -44,7 +65,7 @@ class MotoService:
             self._socket, self._port = get_free_tcp_port()
 
         self._thread = None
-        self._logger = logging.getLogger("MotoService")
+        self._logger = logging.getLogger(self.__class__.__name__)
         self._refcount = 0
         self._ip_address = AWS_HOST
         self._server = None
@@ -127,7 +148,7 @@ class MotoService:
                 time.sleep(0.2)
         else:
             self._stop()  # pytest.fail doesn't call stop_process
-            raise Exception("Cannot start MotoService: {}".format(self._service_name))
+            raise Exception("Cannot start {}: {}".format(self.__class__.__name__, self._service_name))
 
     def _stop(self):
         if self._server:
