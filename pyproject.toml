@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pytest-aiomoto"
-version = "0.3.0"
+version = "0.3.1"
 description = "pytest-aiomoto"
 authors = [
     "Darren Weber <dazza-codes@github.com>",
@@ -75,7 +75,7 @@ s3fs = ["s3fs"]
 
 # py-dev-deps is used as a common denominator for many
 # development dependencies
-py-dev-deps = "^0.3.0"
+py-dev-deps = "^0.3.1"
 
 # Add dev dependencies for testing projects with the
 # fixtures available from this project
