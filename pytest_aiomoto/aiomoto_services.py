@@ -15,26 +15,17 @@
 import asyncio
 import functools
 import logging
-import os
 import threading
 import time
 
 import aiohttp
-import moto.server
 import werkzeug.serving
 
+from pytest_aiomoto.moto_service_utils import CONNECT_TIMEOUT
+from pytest_aiomoto.moto_service_utils import moto_service_app
+from pytest_aiomoto.moto_service_utils import moto_service_reset
 from pytest_aiomoto.utils import AWS_HOST
 from pytest_aiomoto.utils import get_free_tcp_port
-
-_PYCHARM_HOSTED = os.environ.get("PYCHARM_HOSTED") == "1"
-CONNECT_TIMEOUT = 90 if _PYCHARM_HOSTED else 10
-
-
-def moto_service_reset(service_name: str):
-    # each service can have multiple regional backends
-    service_backends = moto.server.backends.get_backend(service_name)
-    for region_name, backend in service_backends.items():
-        backend.reset()
 
 
 class MotoService:
@@ -64,10 +55,7 @@ class MotoService:
         return "http://{}:{}".format(self._ip_address, self._port)
 
     def reset(self):
-        # each service can have multiple regional backends
-        service_backends = moto.server.backends.get_backend(self._service_name)
-        for region_name, backend in service_backends.items():
-            backend.reset()
+        moto_service_reset(service_name=self._service_name)
 
     def __call__(self, func):
         async def wrapper(*args, **kwargs):
@@ -105,10 +93,7 @@ class MotoService:
             await self._stop()
 
     def _server_entry(self):
-        self._main_app = moto.server.DomainDispatcherApplication(
-            moto.server.create_backend_app, service=self._service_name
-        )
-        self._main_app.debug = True
+        self._main_app = moto_service_app(service_name=self._service_name)
 
         if self._socket:
             self._socket.close()  # release right before we use it
