@@ -29,20 +29,43 @@ def test_aws_credentials(aws_credentials):
     assert os.getenv("AWS_SECRET_ACCESS_KEY") == AWS_SECRET_ACCESS_KEY
 
 
-def test_aws_default_credentials(default_profile, mock_default_credentials):
+def test_aws_default_credentials(default_profile, mock_default_session):
     assert os.getenv("AWS_DEFAULT_PROFILE") == "default"
     session = botocore.session.Session()
     profile = session.full_config.get("profiles").get("default")
     assert profile == default_profile
 
 
-def test_aws_credentials(default_profile, mock_default_credentials, mock_aws_credentials):
+def test_mock_default_session(default_profile, mock_default_session):
+    m_session = mock_default_session
+    assert isinstance(m_session, boto3.session.Session)
+    assert 'default' in m_session.available_profiles
+    assert m_session.profile_name == 'default'
+    m_credentials = m_session.get_credentials()
+    assert isinstance(m_credentials, botocore.credentials.Credentials)
+    assert m_credentials.access_key == default_profile["aws_access_key_id"]
+    assert m_credentials.secret_key == default_profile["aws_secret_access_key"]
+    assert os.getenv("AWS_DEFAULT_PROFILE") == "default"
+    session = botocore.session.Session()
+    profile = session.full_config.get("profiles").get("default")
+    assert profile == default_profile
+
+
+def test_mock_aws_credentials(default_profile, mock_default_credentials_file, aws_profile_credentials, monkeypatch):
     profile_name = "default"
     aws_region = default_profile["region"]
 
-    with mock_aws_credentials(profile_name=profile_name, aws_region=aws_region) as m_session:
+    profile_path = mock_default_credentials_file
+    assert profile_path.exists()
+    profile_file = str(profile_path.absolute())
+
+    with aws_profile_credentials(
+        profile_name=profile_name,
+        aws_region=aws_region,
+        profile_file=profile_file
+    ) as m_session:
         assert isinstance(m_session, boto3.session.Session)
-        assert m_session.available_profiles == ['default']
+        assert 'default' in m_session.available_profiles
         assert m_session.profile_name == 'default'
         m_credentials = m_session.get_credentials()
         assert isinstance(m_credentials, botocore.credentials.Credentials)
@@ -54,7 +77,7 @@ def test_aws_credentials(default_profile, mock_default_credentials, mock_aws_cre
         assert profile == default_profile
 
 
-def test_aws_credentials_missing_profile(mock_aws_credentials):
-    with mock_aws_credentials(profile_name="missing-profile", aws_region="us-east-1"):
+def test_aws_credentials_missing_profile(aws_profile_credentials):
+    with aws_profile_credentials(profile_name="missing-profile", aws_region="us-east-1"):
         # this test never gets here, it is skipped due to missing credentials
         assert False
