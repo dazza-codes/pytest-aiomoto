@@ -44,7 +44,13 @@ lint: clean
 
 .PHONY: test
 test: clean
-	@poetry run coverage run --source=$(LIB) -m pytest && poetry run coverage report
+	@poetry run pytest -v \
+        --benchmark-disable \
+        --show-capture=no \
+        --cov-config .coveragerc \
+        --cov-report html \
+        --cov-report term \
+        --cov=$(LIB) tests
 
 .PHONY: typehint
 typehint: clean
