@@ -13,29 +13,16 @@
 # limitations under the License.
 
 """
-Test AWS Fixtures
-
-This test suite checks fixtures for moto clients.
+Test AWS Client Fixtures
 
 """
 
-import os
-
 from botocore.client import BaseClient
 
-from pytest_aiomoto.aws_fixtures import AWS_ACCESS_KEY_ID
-from pytest_aiomoto.aws_fixtures import AWS_REGION
-from pytest_aiomoto.aws_fixtures import AWS_SECRET_ACCESS_KEY
-from pytest_aiomoto.aws_fixtures import AwsBatchClients
-from pytest_aiomoto.aws_fixtures import has_moto_mocks
+from pytest_aiomoto.aws_batch import AwsBatchClients
+from pytest_aiomoto.utils import has_moto_mocks
+from pytest_aiomoto.utils import AWS_REGION
 from pytest_aiomoto.utils import response_success
-
-
-def test_aws_credentials(aws_credentials):
-    assert os.getenv("AWS_ACCESS_KEY_ID")
-    assert os.getenv("AWS_SECRET_ACCESS_KEY")
-    assert os.getenv("AWS_ACCESS_KEY_ID") == AWS_ACCESS_KEY_ID
-    assert os.getenv("AWS_SECRET_ACCESS_KEY") == AWS_SECRET_ACCESS_KEY
 
 
 def test_aws_clients(aws_batch_clients):

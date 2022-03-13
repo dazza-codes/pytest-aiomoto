@@ -1,0 +1,39 @@
+{
+    "Records": [
+        {
+            "eventVersion": "2.1",
+            "eventSource": "aws:s3",
+            "awsRegion": "us-west-2",
+            "eventTime": "2020-06-25T18:51:25.824Z",
+            "eventName": "ObjectCreated:Put",
+            "userIdentity": {
+                "principalId": "AWS:AROAZTXHCRBOF3YTQ36F5:api-ingest-data"
+            },
+            "requestParameters": {
+                "sourceIPAddress": "172.30.12.236"
+            },
+            "responseElements": {
+                "x-amz-request-id": "F5781F243AC13F41",
+                "x-amz-id-2": "spwku5ojiOEqhrYrMbxHEu1bHVOU3/gnnIGg9BuQyXPaF3eeUKB7OtLBhmk3KlV4l1IlHRKQ8FFWp5gJh1E7ct1iLoTkeNLc"
+            },
+            "s3": {
+                "s3SchemaVersion": "1.0",
+                "configurationId": "YmI0ODY5NmEtNDczOC00NTg5LTg5ZWQtMjI2NjVjNmIzNzM2",
+                "bucket": {
+                    "name": "moto-bucket",
+                    "ownerIdentity": {
+                        "principalId": "B1YXG9AZDXCT9EX"
+                    },
+                    "arn": "arn:aws:s3:::moto-bucket"
+                },
+                "object": {
+                    "key": "test/data.csv",
+                    "size": 26988,
+                    "eTag": "753f827cbb9dd46cab9c2d634df3a09e",
+                    "versionId": "YUpTY1.WNWkOa18s27euaDlmh6d.gObU",
+                    "sequencer": "005EF4F231B9EFF66C"
+                }
+            }
+        }
+    ]
+}
