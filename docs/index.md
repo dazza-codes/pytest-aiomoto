@@ -1,6 +1,6 @@
 # Welcome to pytest-aiomoto
 
-version: 0.3.1
+version: 0.4.0
 
 [pytest](https://docs.pytest.org) fixtures for AWS services,
 with support for asyncio fixtures using [aiobotocore](https://aiobotocore.readthedocs.io)
