@@ -36,8 +36,9 @@ def moto_service_reset(service_name: str):
     Each service can have multiple regional backends.
     """
     service_backends = moto.backends.get_backend(service_name)
-    for region_name, backend in service_backends.items():
-        backend.reset()
+    if service_backends:
+        for region_name, backend in service_backends.items():
+            backend.reset()
 
 
 def moto_service_app(service_name: str):

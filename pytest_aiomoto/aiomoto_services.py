@@ -61,8 +61,8 @@ class AioMotoService(MotoService):
             self._socket = None
 
         if self._refcount == 0:
-            del self._services[self._service_name]
             await self._aio_stop()
+            del self._services[self._service_name]
 
     async def _aio_start(self):
         self._thread = threading.Thread(target=self._server_entry, daemon=True)
@@ -92,6 +92,7 @@ class AioMotoService(MotoService):
 
     async def _aio_stop(self):
         if self._server:
+            self.reset()  # clear the service backends
             self._server.shutdown()
 
         self._thread.join()

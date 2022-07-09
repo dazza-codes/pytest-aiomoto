@@ -35,6 +35,7 @@ from pytest_aiomoto.aiomoto_batch import AioAwsBatchClients
 from pytest_aiomoto.aiomoto_batch import AioAwsBatchInfrastructure
 from pytest_aiomoto.aiomoto_batch import aio_batch_infrastructure
 from pytest_aiomoto.aiomoto_services import AioMotoService
+from pytest_aiomoto.moto_services import moto_service_reset
 from pytest_aiomoto.utils import AWS_ACCESS_KEY_ID
 from pytest_aiomoto.utils import AWS_SECRET_ACCESS_KEY
 
@@ -178,6 +179,7 @@ async def aio_aws_batch_client(aio_aws_session, aio_aws_batch_server):
         "batch", endpoint_url=aio_aws_batch_server
     ) as client:
         yield client
+    moto_service_reset("batch")
 
 
 @pytest.fixture
@@ -186,6 +188,7 @@ async def aio_aws_ec2_client(aio_aws_session, aio_aws_ec2_server):
         "ec2", endpoint_url=aio_aws_ec2_server
     ) as client:
         yield client
+    moto_service_reset("ec2")
 
 
 @pytest.fixture
@@ -194,6 +197,7 @@ async def aio_aws_ecs_client(aio_aws_session, aio_aws_ecs_server):
         "ecs", endpoint_url=aio_aws_ecs_server
     ) as client:
         yield client
+    moto_service_reset("ecs")
 
 
 @pytest.fixture
@@ -203,6 +207,7 @@ async def aio_aws_iam_client(aio_aws_session, aio_aws_iam_server):
     ) as client:
         client.meta.config.region_name = "aws-global"  # not AWS_REGION
         yield client
+    moto_service_reset("iam")
 
 
 @pytest.fixture
@@ -211,6 +216,7 @@ async def aio_aws_lambda_client(aio_aws_session, aio_aws_lambda_server):
         "lambda", endpoint_url=aio_aws_lambda_server
     ) as client:
         yield client
+    moto_service_reset("lambda")
 
 
 @pytest.fixture
@@ -219,6 +225,7 @@ async def aio_aws_logs_client(aio_aws_session, aio_aws_logs_server):
         "logs", endpoint_url=aio_aws_logs_server
     ) as client:
         yield client
+    moto_service_reset("logs")
 
 
 @pytest.fixture
@@ -233,6 +240,7 @@ async def aio_aws_s3_client(aio_aws_session, aio_aws_s3_server, mocker):
         #     return_value=client
         # )
         yield client
+    moto_service_reset("s3")
 
 
 @pytest.fixture
@@ -244,7 +252,7 @@ async def aio_aws_batch_clients(
     aio_aws_logs_client,
     aws_region,
 ):
-    return AioAwsBatchClients(
+    yield AioAwsBatchClients(
         batch=aio_aws_batch_client,
         ec2=aio_aws_ec2_client,
         ecs=aio_aws_ecs_client,
@@ -256,17 +264,19 @@ async def aio_aws_batch_clients(
 
 @pytest.fixture
 async def aio_aws_batch_infrastructure(
-        aio_aws_batch_clients: AioAwsBatchClients,
-        compute_env_name: str,
-        job_queue_name: str,
-        job_definition_name: str,
+    aio_aws_batch_clients: AioAwsBatchClients,
+    compute_env_name: str,
+    job_queue_name: str,
+    job_definition_name: str,
+    iam_role_name: str,
 ) -> AioAwsBatchInfrastructure:
     aws_region = aio_aws_batch_clients.region
-    aws_resources = await aio_batch_infrastructure(
-        aio_aws_batch_clients,
-        aws_region,
-        compute_env_name,
-        job_queue_name,
-        job_definition_name,
-    )
-    return aws_resources
+    async with aio_batch_infrastructure(
+        aio_aws_batch_clients=aio_aws_batch_clients,
+        aws_region=aws_region,
+        compute_env_name=compute_env_name,
+        job_queue_name=job_queue_name,
+        job_definition_name=job_definition_name,
+        iam_role_name=iam_role_name
+    ) as aio_batch_resources:
+        yield aio_batch_resources

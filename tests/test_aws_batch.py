@@ -26,26 +26,8 @@ according to the moto license (Apache-2.0).
     - https://github.com/spulec/moto/blob/master/tests/test_batch/test_batch.py
 """
 
-import pytest
-
 from pytest_aiomoto.utils import response_success
-from pytest_aiomoto.aws_batch import AwsBatchClients
 from pytest_aiomoto.aws_batch import AwsBatchInfrastructure
-from pytest_aiomoto.aws_batch import batch_infrastructure
-
-
-@pytest.fixture
-def aws_batch_infrastructure(
-    aws_batch_clients: AwsBatchClients,
-    compute_env_name: str,
-    job_queue_name: str,
-    job_definition_name: str,
-) -> AwsBatchInfrastructure:
-    aws_region = aws_batch_clients.region
-    aws_resources = batch_infrastructure(
-        aws_batch_clients, compute_env_name, job_queue_name, job_definition_name
-    )
-    return aws_resources
 
 
 def test_aws_batch_infrastructure(
@@ -56,7 +38,7 @@ def test_aws_batch_infrastructure(
     assert infrastructure.vpc_id
     assert infrastructure.subnet_id
     assert infrastructure.security_group_id
-    assert infrastructure.iam_arn
+    assert infrastructure.iam_role_arn
     assert infrastructure.compute_env_name
     assert infrastructure.compute_env_arn
     assert infrastructure.job_queue_name

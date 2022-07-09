@@ -28,9 +28,7 @@ according to the moto license (Apache-2.0).
 
 import pytest
 
-from pytest_aiomoto.aiomoto_fixtures import AioAwsBatchClients
 from pytest_aiomoto.aiomoto_fixtures import AioAwsBatchInfrastructure
-from pytest_aiomoto.aiomoto_fixtures import aio_batch_infrastructure
 from pytest_aiomoto.aws_batch_models import AWSBatchJobStates
 from pytest_aiomoto.utils import response_success
 
@@ -44,7 +42,7 @@ async def test_aws_batch_infrastructure(
     assert infrastructure.vpc_id
     assert infrastructure.subnet_id
     assert infrastructure.security_group_id
-    assert infrastructure.iam_arn
+    assert infrastructure.iam_role_arn
     assert infrastructure.compute_env_name
     assert infrastructure.compute_env_arn
     assert infrastructure.job_queue_name
@@ -70,10 +68,18 @@ async def test_aio_batch_job_definitions(
     response = await clients.batch.describe_job_definitions()
     assert response_success(response)
     job_definitions = response["jobDefinitions"]
-    assert len(job_definitions) == 1
-    job_definition = job_definitions[0]
-    assert job_definition["jobDefinitionArn"] == aws_resources.job_definition_arn
-    assert job_definition["jobDefinitionName"] == aws_resources.job_definition_name
+
+    # https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/batch.html#Batch.Client.deregister_job_definition
+    # - a de-registered job definition can persist for 180 days
+    # - in recent versions of moto, the batch infrastructure is not entirely cleaned up (why?)
+    matching_job_definition = False
+    for job_definition in job_definitions:
+        if (
+            (job_definition["jobDefinitionArn"] == aws_resources.job_definition_arn) and
+            (job_definition["jobDefinitionName"] == aws_resources.job_definition_name)
+        ):
+            matching_job_definition = True
+    assert matching_job_definition
 
 
 @pytest.mark.asyncio

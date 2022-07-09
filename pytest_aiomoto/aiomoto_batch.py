@@ -26,7 +26,7 @@ applied to the pytest-aiomoto project.
     - https://github.com/spulec/moto/pull/1197/files
     - https://github.com/spulec/moto/blob/master/tests/test_batch/test_batch.py
 """
-
+from contextlib import asynccontextmanager
 from typing import NamedTuple
 from typing import Optional
 
@@ -70,7 +70,8 @@ class AioAwsBatchInfrastructure:
     vpc_id: Optional[str] = None
     subnet_id: Optional[str] = None
     security_group_id: Optional[str] = None
-    iam_arn: Optional[str] = None
+    iam_role_arn: Optional[str] = None
+    iam_role_name: Optional[str] = None
     compute_env_name: Optional[str] = None
     compute_env_arn: Optional[str] = None
     job_queue_name: Optional[str] = None
@@ -79,12 +80,14 @@ class AioAwsBatchInfrastructure:
     job_definition_arn: Optional[str] = None
 
 
+@asynccontextmanager
 async def aio_batch_infrastructure(
     aio_aws_batch_clients: AioAwsBatchClients,
     aws_region: str,
     compute_env_name: str,
     job_queue_name: str,
     job_definition_name: str,
+    iam_role_name: str,
 ) -> AioAwsBatchInfrastructure:
     """
     Create AWS Batch infrastructure, including:
@@ -99,71 +102,94 @@ async def aio_batch_infrastructure(
     """
 
     infrastructure = AioAwsBatchInfrastructure()
-    infrastructure.aws_region = aws_region
-    infrastructure.aio_aws_clients = aio_aws_batch_clients
 
-    resp = await aio_aws_batch_clients.ec2.create_vpc(CidrBlock="172.30.0.0/24")
-    vpc_id = resp["Vpc"]["VpcId"]
+    try:
 
-    resp = await aio_aws_batch_clients.ec2.create_subnet(
-        AvailabilityZone=f"{aws_region}a", CidrBlock="172.30.0.0/25", VpcId=vpc_id
-    )
-    subnet_id = resp["Subnet"]["SubnetId"]
+        infrastructure.aws_region = aws_region
+        infrastructure.aio_aws_clients = aio_aws_batch_clients
 
-    resp = await aio_aws_batch_clients.ec2.create_security_group(
-        Description="moto_test_sg_desc", GroupName="moto_test_sg", VpcId=vpc_id
-    )
-    sg_id = resp["GroupId"]
+        resp = await aio_aws_batch_clients.ec2.create_vpc(CidrBlock="172.30.0.0/24")
+        vpc_id = resp["Vpc"]["VpcId"]
 
-    resp = await aio_aws_batch_clients.iam.create_role(
-        RoleName="MotoTestRole", AssumeRolePolicyDocument="moto_test_policy"
-    )
-    iam_arn = resp["Role"]["Arn"]
+        resp = await aio_aws_batch_clients.ec2.create_subnet(
+            AvailabilityZone=f"{aws_region}a", CidrBlock="172.30.0.0/25", VpcId=vpc_id
+        )
+        subnet_id = resp["Subnet"]["SubnetId"]
 
-    resp = await aio_aws_batch_clients.batch.create_compute_environment(
-        computeEnvironmentName=compute_env_name,
-        type="UNMANAGED",
-        state="ENABLED",
-        serviceRole=iam_arn,
-    )
-    compute_env_arn = resp["computeEnvironmentArn"]
+        resp = await aio_aws_batch_clients.ec2.create_security_group(
+            Description="moto_test_sg_desc", GroupName="moto_test_sg", VpcId=vpc_id
+        )
+        sg_id = resp["GroupId"]
 
-    resp = await aio_aws_batch_clients.batch.create_job_queue(
-        jobQueueName=job_queue_name,
-        state="ENABLED",
-        priority=123,
-        computeEnvironmentOrder=[{"order": 123, "computeEnvironment": compute_env_arn}],
-    )
-    assert resp["jobQueueName"] == job_queue_name
-    assert resp["jobQueueArn"]
-    job_queue_arn = resp["jobQueueArn"]
+        resp = await aio_aws_batch_clients.iam.create_role(
+            RoleName=iam_role_name, AssumeRolePolicyDocument="moto_test_policy"
+        )
+        iam_role_arn = resp["Role"]["Arn"]
+        iam_role_name = resp["Role"]["RoleName"]
 
-    resp = await aio_aws_batch_clients.batch.register_job_definition(
-        jobDefinitionName=job_definition_name,
-        type="container",
-        containerProperties={
-            "image": "alpine",
-            "vcpus": 1,
-            "memory": 8,
-            "command": ["sleep", "2"],  # NOTE: job runs for 2 sec without overrides
-        },
-    )
-    assert resp["jobDefinitionName"] == job_definition_name
-    assert resp["jobDefinitionArn"]
-    job_definition_arn = resp["jobDefinitionArn"]
-    assert resp["revision"]
-    assert resp["jobDefinitionArn"].endswith(
-        "{0}:{1}".format(resp["jobDefinitionName"], resp["revision"])
-    )
+        resp = await aio_aws_batch_clients.batch.create_compute_environment(
+            computeEnvironmentName=compute_env_name,
+            type="UNMANAGED",
+            state="ENABLED",
+            serviceRole=iam_role_arn,
+        )
+        compute_env_arn = resp["computeEnvironmentArn"]
 
-    infrastructure.vpc_id = vpc_id
-    infrastructure.subnet_id = subnet_id
-    infrastructure.security_group_id = sg_id
-    infrastructure.iam_arn = iam_arn
-    infrastructure.compute_env_name = compute_env_name
-    infrastructure.compute_env_arn = compute_env_arn
-    infrastructure.job_queue_name = job_queue_name
-    infrastructure.job_queue_arn = job_queue_arn
-    infrastructure.job_definition_name = job_definition_name
-    infrastructure.job_definition_arn = job_definition_arn
-    return infrastructure
+        resp = await aio_aws_batch_clients.batch.create_job_queue(
+            jobQueueName=job_queue_name,
+            state="ENABLED",
+            priority=123,
+            computeEnvironmentOrder=[{"order": 123, "computeEnvironment": compute_env_arn}],
+        )
+        assert resp["jobQueueName"] == job_queue_name
+        assert resp["jobQueueArn"]
+        job_queue_arn = resp["jobQueueArn"]
+
+        resp = await aio_aws_batch_clients.batch.register_job_definition(
+            jobDefinitionName=job_definition_name,
+            type="container",
+            containerProperties={
+                "image": "alpine",
+                "vcpus": 1,
+                "memory": 8,
+                "command": ["sleep", "2"],  # NOTE: job runs for 2 sec without overrides
+            },
+        )
+        assert resp["jobDefinitionName"] == job_definition_name
+        assert resp["jobDefinitionArn"]
+        job_definition_arn = resp["jobDefinitionArn"]
+        assert resp["revision"]
+        assert resp["jobDefinitionArn"].endswith(
+            "{0}:{1}".format(resp["jobDefinitionName"], resp["revision"])
+        )
+
+        infrastructure.vpc_id = vpc_id
+        infrastructure.subnet_id = subnet_id
+        infrastructure.security_group_id = sg_id
+        infrastructure.iam_role_arn = iam_role_arn
+        infrastructure.iam_role_name = iam_role_name
+        infrastructure.compute_env_name = compute_env_name
+        infrastructure.compute_env_arn = compute_env_arn
+        infrastructure.job_queue_name = job_queue_name
+        infrastructure.job_queue_arn = job_queue_arn
+        infrastructure.job_definition_name = job_definition_name
+        infrastructure.job_definition_arn = job_definition_arn
+
+        yield infrastructure
+
+    finally:
+
+        # TODO: break all services into separate fixtures that clean up
+
+        # https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/batch.html#Batch.Client.deregister_job_definition
+        # - a deregistered job definition can persist for 180 days
+        await aio_aws_batch_clients.batch.deregister_job_definition(jobDefinition=infrastructure.job_definition_arn)
+
+        await aio_aws_batch_clients.batch.delete_job_queue(jobQueue=infrastructure.job_queue_arn)
+        await aio_aws_batch_clients.batch.delete_compute_environment(computeEnvironment=infrastructure.compute_env_arn)
+
+        await aio_aws_batch_clients.iam.delete_role(RoleName=infrastructure.iam_role_name)
+
+        await aio_aws_batch_clients.ec2.delete_security_group(GroupId=infrastructure.security_group_id)
+        await aio_aws_batch_clients.ec2.delete_subnet(SubnetId=infrastructure.subnet_id)
+        await aio_aws_batch_clients.ec2.delete_vpc(VpcId=infrastructure.vpc_id)
