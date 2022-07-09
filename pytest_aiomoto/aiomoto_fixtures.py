@@ -29,6 +29,7 @@ applied to my aio_aws project.
 
 import pytest
 from aiobotocore.config import AioConfig
+from aiobotocore.session import AioSession
 from aiobotocore.session import get_session
 
 from pytest_aiomoto.aiomoto_batch import AioAwsBatchClients
@@ -42,6 +43,9 @@ from pytest_aiomoto.utils import AWS_SECRET_ACCESS_KEY
 
 @pytest.fixture
 async def aio_aws_batch_server():
+    """
+    AioMotoService("batch").endpoint_url
+    """
     async with AioMotoService("batch") as svc:
         svc.reset()
         yield svc.endpoint_url
@@ -50,6 +54,9 @@ async def aio_aws_batch_server():
 
 @pytest.fixture
 async def aio_aws_cloudformation_server():
+    """
+    AioMotoService("cloudformation").endpoint_url
+    """
     async with AioMotoService("cloudformation") as svc:
         svc.reset()
         yield svc.endpoint_url
@@ -58,6 +65,9 @@ async def aio_aws_cloudformation_server():
 
 @pytest.fixture
 async def aio_aws_ec2_server():
+    """
+    AioMotoService("ec2").endpoint_url
+    """
     async with AioMotoService("ec2") as svc:
         svc.reset()
         yield svc.endpoint_url
@@ -66,6 +76,9 @@ async def aio_aws_ec2_server():
 
 @pytest.fixture
 async def aio_aws_ecs_server():
+    """
+    AioMotoService("ecs").endpoint_url
+    """
     async with AioMotoService("ecs") as svc:
         svc.reset()
         yield svc.endpoint_url
@@ -74,6 +87,9 @@ async def aio_aws_ecs_server():
 
 @pytest.fixture
 async def aio_aws_iam_server():
+    """
+    AioMotoService("iam").endpoint_url
+    """
     async with AioMotoService("iam") as svc:
         svc.reset()
         yield svc.endpoint_url
@@ -82,6 +98,9 @@ async def aio_aws_iam_server():
 
 @pytest.fixture
 async def aio_aws_dynamodb2_server():
+    """
+    AioMotoService("dynamodb2").endpoint_url
+    """
     async with AioMotoService("dynamodb2") as svc:
         svc.reset()
         yield svc.endpoint_url
@@ -90,6 +109,9 @@ async def aio_aws_dynamodb2_server():
 
 @pytest.fixture
 async def aio_aws_lambda_server():
+    """
+    AioMotoService("lambda").endpoint_url
+    """
     async with AioMotoService("lambda") as svc:
         svc.reset()
         yield svc.endpoint_url
@@ -98,6 +120,9 @@ async def aio_aws_lambda_server():
 
 @pytest.fixture
 async def aio_aws_logs_server():
+    """
+    AioMotoService("logs").endpoint_url
+    """
     # cloud watch logs
     async with AioMotoService("logs") as svc:
         svc.reset()
@@ -107,6 +132,9 @@ async def aio_aws_logs_server():
 
 @pytest.fixture
 async def aio_aws_s3_server():
+    """
+    AioMotoService("s3").endpoint_url
+    """
     async with AioMotoService("s3") as svc:
         svc.reset()
         yield svc.endpoint_url
@@ -115,6 +143,9 @@ async def aio_aws_s3_server():
 
 @pytest.fixture
 async def aio_aws_sns_server():
+    """
+    AioMotoService("sns").endpoint_url
+    """
     async with AioMotoService("sns") as svc:
         svc.reset()
         yield svc.endpoint_url
@@ -123,6 +154,9 @@ async def aio_aws_sns_server():
 
 @pytest.fixture
 async def aio_aws_sqs_server():
+    """
+    AioMotoService("sqs").endpoint_url
+    """
     async with AioMotoService("sqs") as svc:
         svc.reset()
         yield svc.endpoint_url
@@ -130,7 +164,10 @@ async def aio_aws_sqs_server():
 
 
 @pytest.fixture
-def aio_aws_session(aws_credentials, aws_region, event_loop):
+def aio_aws_session(aws_credentials, aws_region, event_loop) -> AioSession:
+    """
+    An AioSession configured with credentials for moto services
+    """
     # pytest-asyncio provides and manages the `event_loop`
     # and it should be set as the default loop for this session
     assert event_loop  # but it's not == asyncio.get_event_loop() ?
@@ -175,6 +212,9 @@ def aio_aws_client(aio_aws_session):
 
 @pytest.fixture
 async def aio_aws_batch_client(aio_aws_session, aio_aws_batch_server):
+    """
+    AWS Async Client for AioMotoService("batch").endpoint_url
+    """
     async with aio_aws_session.create_client(
         "batch", endpoint_url=aio_aws_batch_server
     ) as client:
@@ -184,6 +224,9 @@ async def aio_aws_batch_client(aio_aws_session, aio_aws_batch_server):
 
 @pytest.fixture
 async def aio_aws_ec2_client(aio_aws_session, aio_aws_ec2_server):
+    """
+    AWS Async Client for AioMotoService("ec2").endpoint_url
+    """
     async with aio_aws_session.create_client(
         "ec2", endpoint_url=aio_aws_ec2_server
     ) as client:
@@ -193,6 +236,9 @@ async def aio_aws_ec2_client(aio_aws_session, aio_aws_ec2_server):
 
 @pytest.fixture
 async def aio_aws_ecs_client(aio_aws_session, aio_aws_ecs_server):
+    """
+    AWS Async Client for AioMotoService("ecs").endpoint_url
+    """
     async with aio_aws_session.create_client(
         "ecs", endpoint_url=aio_aws_ecs_server
     ) as client:
@@ -202,6 +248,9 @@ async def aio_aws_ecs_client(aio_aws_session, aio_aws_ecs_server):
 
 @pytest.fixture
 async def aio_aws_iam_client(aio_aws_session, aio_aws_iam_server):
+    """
+    AWS Async Client for AioMotoService("iam").endpoint_url
+    """
     async with aio_aws_session.create_client(
         "iam", endpoint_url=aio_aws_iam_server
     ) as client:
@@ -212,6 +261,9 @@ async def aio_aws_iam_client(aio_aws_session, aio_aws_iam_server):
 
 @pytest.fixture
 async def aio_aws_lambda_client(aio_aws_session, aio_aws_lambda_server):
+    """
+    AWS Async Client for AioMotoService("lambda").endpoint_url
+    """
     async with aio_aws_session.create_client(
         "lambda", endpoint_url=aio_aws_lambda_server
     ) as client:
@@ -221,6 +273,9 @@ async def aio_aws_lambda_client(aio_aws_session, aio_aws_lambda_server):
 
 @pytest.fixture
 async def aio_aws_logs_client(aio_aws_session, aio_aws_logs_server):
+    """
+    AWS Async Client for AioMotoService("logs").endpoint_url
+    """
     async with aio_aws_session.create_client(
         "logs", endpoint_url=aio_aws_logs_server
     ) as client:
@@ -230,6 +285,9 @@ async def aio_aws_logs_client(aio_aws_session, aio_aws_logs_server):
 
 @pytest.fixture
 async def aio_aws_s3_client(aio_aws_session, aio_aws_s3_server, mocker):
+    """
+    AWS Async Client for AioMotoService("s3").endpoint_url
+    """
     async with aio_aws_session.create_client(
         "s3", endpoint_url=aio_aws_s3_server
     ) as client:
@@ -251,7 +309,10 @@ async def aio_aws_batch_clients(
     aio_aws_iam_client,
     aio_aws_logs_client,
     aws_region,
-):
+) -> AioAwsBatchClients:
+    """
+    Async Clients for AWS Batch Infrastructure
+    """
     yield AioAwsBatchClients(
         batch=aio_aws_batch_client,
         ec2=aio_aws_ec2_client,
@@ -270,6 +331,9 @@ async def aio_aws_batch_infrastructure(
     job_definition_name: str,
     iam_role_name: str,
 ) -> AioAwsBatchInfrastructure:
+    """
+    AWS Batch Infrastructure with Async Clients
+    """
     aws_region = aio_aws_batch_clients.region
     async with aio_batch_infrastructure(
         aio_aws_batch_clients=aio_aws_batch_clients,
