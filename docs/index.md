@@ -20,8 +20,7 @@ asynchronous clients (aiobotocore).
   recommended pinning this dependency to patch releases during the
   0.x.y releases.
 - This package could restrict available versions of aws libs, including:
-  aiobotocore, botocore, boto3, and moto.  The initial intention is to allow
-  any 2.x.y versions of aiobotocore and moto.
+  aiobotocore, botocore, boto3, and moto.
 - The fixtures in this package might not be optimized for concurrent testing.
   It is not known yet whether the fixtures are thread safe or adequately
   randomized to support parallel test suites.
