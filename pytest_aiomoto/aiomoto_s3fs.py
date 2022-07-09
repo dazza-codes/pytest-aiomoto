@@ -35,11 +35,12 @@ def aio_s3fs(
         import s3fs
 
         try:
-            monkeypatch.setenv("S3_ENDPOINT_URL", aio_aws_s3_server)
+            monkeypatch.setenv("S3_ENDPOINT_URL", aio_aws_s3_server.endpoint_url)
+            # TODO: find a way to apply this method mock only for creating "s3" clients;
             aio_client_patch = mocker.patch(
                 "aiobotocore.session.AioSession.create_client",
                 side_effect=partial(
-                    aio_aws_session.create_client, "s3", endpoint_url=aio_aws_s3_server
+                    aio_aws_session.create_client, "s3", endpoint_url=aio_aws_s3_server.endpoint_url
                 )
             )
             s3fs.S3FileSystem.clear_instance_cache()
