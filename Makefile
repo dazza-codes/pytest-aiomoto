@@ -19,8 +19,8 @@ clean:
 .PHONY: docs
 docs: clean
 	@rm -rf site
-	@poetry run mkdocs build
-	@echo -e "\033[95m\n\nBuild successful! View docs with 'mkdocs serve'\n\033[0m"
+	poetry run mkdocs build && \
+	echo -e "\033[95m\n\nBuild successful! View docs with 'mkdocs serve'\n\033[0m"
 
 .PHONY: flake8
 flake8: clean
