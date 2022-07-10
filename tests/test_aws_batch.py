@@ -26,8 +26,9 @@ according to the moto license (Apache-2.0).
     - https://github.com/spulec/moto/blob/master/tests/test_batch/test_batch.py
 """
 
-from pytest_aiomoto.utils import response_success
 from pytest_aiomoto.aws_batch import AwsBatchInfrastructure
+from pytest_aiomoto.aws_batch_models import AWSBatchJobStates
+from pytest_aiomoto.utils import response_success
 
 
 def test_aws_batch_infrastructure(
@@ -39,6 +40,7 @@ def test_aws_batch_infrastructure(
     assert infrastructure.subnet_id
     assert infrastructure.security_group_id
     assert infrastructure.iam_role_arn
+    assert infrastructure.iam_role_name
     assert infrastructure.compute_env_name
     assert infrastructure.compute_env_arn
     assert infrastructure.job_queue_name
@@ -93,15 +95,9 @@ def test_batch_list_jobs(aws_batch_infrastructure: AwsBatchInfrastructure):
     clients = aws_batch_infrastructure.aws_clients
     job_queue_name = aws_batch_infrastructure.job_queue_name
 
-    for job_status in [
-        "SUBMITTED",
-        "PENDING",
-        "RUNNABLE",
-        "STARTING",
-        "RUNNING",
-        "SUCCEEDED",
-        "FAILED",
-    ]:
+    job_states = [state.name for state in AWSBatchJobStates]
+
+    for job_status in job_states:
         response = clients.batch.list_jobs(
             jobQueue=job_queue_name, jobStatus=job_status
         )
