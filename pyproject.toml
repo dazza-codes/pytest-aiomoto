@@ -74,7 +74,7 @@ s3fs = ["s3fs"]
 [tool.poetry.dev-dependencies]
 
 # py-dev-deps is used as a common denominator for many development dependencies
-py-dev-deps = "^0.4.0"
+py-dev-deps = "^0.5.0"
 
 # Add dev dependencies for testing projects with the
 # fixtures available from this project
