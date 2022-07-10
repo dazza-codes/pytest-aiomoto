@@ -15,6 +15,7 @@ import uuid
 from typing import List
 
 import pytest
+import pytest_asyncio
 
 from pytest_aiomoto.utils import response_success
 
@@ -71,7 +72,7 @@ def aio_s3_object_text() -> str:
     return "aio-s3 test object text\n"
 
 
-@pytest.fixture
+@pytest_asyncio.fixture
 async def aio_s3_bucket(aio_s3_bucket_name, aio_s3_key, aio_aws_s3_client, aws_region) -> str:
     resp = await aio_aws_s3_client.create_bucket(
         Bucket=aio_s3_bucket_name,
@@ -86,7 +87,7 @@ async def aio_s3_bucket(aio_s3_bucket_name, aio_s3_key, aio_aws_s3_client, aws_r
     # TODO: cleanup bucket
 
 
-@pytest.fixture
+@pytest_asyncio.fixture
 async def aio_s3_buckets(
     aio_s3_bucket_name, aio_aws_s3_client, aws_region
 ) -> List[str]:
@@ -106,7 +107,7 @@ async def aio_s3_buckets(
     return bucket_names
 
 
-@pytest.fixture
+@pytest_asyncio.fixture
 async def aio_s3_object_uri(
     aio_s3_bucket_name, aio_s3_key, aio_s3_uri, aio_s3_object_text, aio_s3_bucket, aio_aws_s3_client
 ) -> str:
