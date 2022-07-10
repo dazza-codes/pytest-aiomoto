@@ -26,9 +26,8 @@ applied to my aio_aws project.
     - https://github.com/spulec/moto/pull/1197/files
     - https://github.com/spulec/moto/blob/master/tests/test_batch/test_batch.py
 """
-from functools import partial
 
-import pytest
+import pytest_asyncio
 from aiobotocore.config import AioConfig
 from aiobotocore.session import AioSession
 from aiobotocore.session import get_session
@@ -42,7 +41,7 @@ from pytest_aiomoto.utils import AWS_ACCESS_KEY_ID
 from pytest_aiomoto.utils import AWS_SECRET_ACCESS_KEY
 
 
-@pytest.fixture
+@pytest_asyncio.fixture
 async def aio_aws_batch_server() -> AioMotoService:
     """
     AioMotoService("batch")
@@ -53,7 +52,7 @@ async def aio_aws_batch_server() -> AioMotoService:
         svc.reset()
 
 
-@pytest.fixture
+@pytest_asyncio.fixture
 async def aio_aws_cloudformation_server() -> AioMotoService:
     """
     AioMotoService("cloudformation")
@@ -64,7 +63,7 @@ async def aio_aws_cloudformation_server() -> AioMotoService:
         svc.reset()
 
 
-@pytest.fixture
+@pytest_asyncio.fixture
 async def aio_aws_ec2_server() -> AioMotoService:
     """
     AioMotoService("ec2")
@@ -75,7 +74,7 @@ async def aio_aws_ec2_server() -> AioMotoService:
         svc.reset()
 
 
-@pytest.fixture
+@pytest_asyncio.fixture
 async def aio_aws_ecs_server() -> AioMotoService:
     """
     AioMotoService("ecs")
@@ -86,7 +85,7 @@ async def aio_aws_ecs_server() -> AioMotoService:
         svc.reset()
 
 
-@pytest.fixture
+@pytest_asyncio.fixture
 async def aio_aws_iam_server() -> AioMotoService:
     """
     AioMotoService("iam")
@@ -97,7 +96,7 @@ async def aio_aws_iam_server() -> AioMotoService:
         svc.reset()
 
 
-@pytest.fixture
+@pytest_asyncio.fixture
 async def aio_aws_dynamodb2_server() -> AioMotoService:
     """
     AioMotoService("dynamodb2")
@@ -108,7 +107,7 @@ async def aio_aws_dynamodb2_server() -> AioMotoService:
         svc.reset()
 
 
-@pytest.fixture
+@pytest_asyncio.fixture
 async def aio_aws_lambda_server() -> AioMotoService:
     """
     AioMotoService("lambda")
@@ -119,7 +118,7 @@ async def aio_aws_lambda_server() -> AioMotoService:
         svc.reset()
 
 
-@pytest.fixture
+@pytest_asyncio.fixture
 async def aio_aws_logs_server() -> AioMotoService:
     """
     AioMotoService("logs")
@@ -131,7 +130,7 @@ async def aio_aws_logs_server() -> AioMotoService:
         svc.reset()
 
 
-@pytest.fixture
+@pytest_asyncio.fixture
 async def aio_aws_s3_server() -> AioMotoService:
     """
     AioMotoService("s3")
@@ -142,7 +141,7 @@ async def aio_aws_s3_server() -> AioMotoService:
         svc.reset()
 
 
-@pytest.fixture
+@pytest_asyncio.fixture
 async def aio_aws_sns_server() -> AioMotoService:
     """
     AioMotoService("sns")
@@ -153,7 +152,7 @@ async def aio_aws_sns_server() -> AioMotoService:
         svc.reset()
 
 
-@pytest.fixture
+@pytest_asyncio.fixture
 async def aio_aws_sqs_server() -> AioMotoService:
     """
     AioMotoService("sqs")
@@ -164,7 +163,7 @@ async def aio_aws_sqs_server() -> AioMotoService:
         svc.reset()
 
 
-@pytest.fixture
+@pytest_asyncio.fixture
 def aio_aws_session(aws_credentials, aws_region, event_loop) -> AioSession:
     """
     An AioSession configured with credentials for moto services
@@ -199,7 +198,7 @@ def aio_aws_session(aws_credentials, aws_region, event_loop) -> AioSession:
     yield session
 
 
-@pytest.fixture
+@pytest_asyncio.fixture
 def aio_aws_client(aio_aws_session):
     async def _get_client(service_name):
         async with AioMotoService(service_name) as srv:
@@ -211,7 +210,7 @@ def aio_aws_client(aio_aws_session):
     return _get_client
 
 
-@pytest.fixture
+@pytest_asyncio.fixture
 async def aio_aws_batch_client(aio_aws_session, aio_aws_batch_server):
     """
     AWS Async Client for AioMotoService("batch")
@@ -223,7 +222,7 @@ async def aio_aws_batch_client(aio_aws_session, aio_aws_batch_server):
     moto_service_reset("batch")
 
 
-@pytest.fixture
+@pytest_asyncio.fixture
 async def aio_aws_ec2_client(aio_aws_session, aio_aws_ec2_server):
     """
     AWS Async Client for AioMotoService("ec2")
@@ -235,7 +234,7 @@ async def aio_aws_ec2_client(aio_aws_session, aio_aws_ec2_server):
     moto_service_reset("ec2")
 
 
-@pytest.fixture
+@pytest_asyncio.fixture
 async def aio_aws_ecs_client(aio_aws_session, aio_aws_ecs_server):
     """
     AWS Async Client for AioMotoService("ecs")
@@ -247,7 +246,7 @@ async def aio_aws_ecs_client(aio_aws_session, aio_aws_ecs_server):
     moto_service_reset("ecs")
 
 
-@pytest.fixture
+@pytest_asyncio.fixture
 async def aio_aws_iam_client(aio_aws_session, aio_aws_iam_server):
     """
     AWS Async Client for AioMotoService("iam")
@@ -260,7 +259,7 @@ async def aio_aws_iam_client(aio_aws_session, aio_aws_iam_server):
     moto_service_reset("iam")
 
 
-@pytest.fixture
+@pytest_asyncio.fixture
 async def aio_aws_lambda_client(aio_aws_session, aio_aws_lambda_server):
     """
     AWS Async Client for AioMotoService("lambda")
@@ -272,7 +271,7 @@ async def aio_aws_lambda_client(aio_aws_session, aio_aws_lambda_server):
     moto_service_reset("lambda")
 
 
-@pytest.fixture
+@pytest_asyncio.fixture
 async def aio_aws_logs_client(aio_aws_session, aio_aws_logs_server):
     """
     AWS Async Client for AioMotoService("logs")
@@ -284,7 +283,7 @@ async def aio_aws_logs_client(aio_aws_session, aio_aws_logs_server):
     moto_service_reset("logs")
 
 
-@pytest.fixture
+@pytest_asyncio.fixture
 async def aio_aws_s3_client(aio_aws_session, aio_aws_s3_server, mocker):
     """
     AWS Async Client for AioMotoService("s3")
@@ -303,7 +302,7 @@ async def aio_aws_s3_client(aio_aws_session, aio_aws_s3_server, mocker):
     moto_service_reset("s3")
 
 
-@pytest.fixture
+@pytest_asyncio.fixture
 async def aio_aws_batch_clients(
     aio_aws_batch_client,
     aio_aws_ec2_client,
@@ -325,7 +324,7 @@ async def aio_aws_batch_clients(
     )
 
 
-@pytest.fixture
+@pytest_asyncio.fixture
 async def aio_aws_batch_infrastructure(
     aio_aws_batch_clients: AioAwsBatchClients,
     compute_env_name: str,

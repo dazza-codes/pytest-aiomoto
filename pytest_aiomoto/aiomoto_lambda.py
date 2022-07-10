@@ -20,6 +20,7 @@ Test Asyncio AWS Lambda
 import botocore.client
 import botocore.exceptions
 import pytest
+import pytest_asyncio
 
 from pytest_aiomoto.aws_lambda import aws_lambda_src
 from pytest_aiomoto.aws_lambda import zip_lambda
@@ -43,7 +44,7 @@ def aws_lambda_python_runtime() -> str:
     return "python3.7"
 
 
-@pytest.fixture
+@pytest_asyncio.fixture
 async def lambda_iam_role(aio_aws_iam_client):
     """
     An IAM role to create an AWS Lambda function
@@ -60,7 +61,7 @@ async def lambda_iam_role(aio_aws_iam_client):
         return response["Role"]["Arn"]
 
 
-@pytest.fixture
+@pytest_asyncio.fixture
 async def aws_lambda_func(
     aws_lambda_zip, lambda_iam_role, aws_lambda_python_runtime, aio_aws_lambda_client
 ) -> str:
