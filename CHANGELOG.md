@@ -45,3 +45,25 @@ Initial implementation for pytest-aiomoto fixtures
 - Add pytest.ini markers
 - Relax dependency versions
 
+
+0.5.0 (2022-07-09)
+------------------
+- Bump release to 0.5.0
+- Bump release to 0.5.0-alpha.0
+- Update Apache copyright dates in test files
+- Update tests for AWS Batch infrastructure
+- Use a UUID fixture for unique s3 artifacts
+- Apply pytest-asyncio strict decorators on fixtures
+- Use pytest-asyncio strict mode
+- poetry update
+- Update dependencies for pytest 7.x
+- Return service objects from aio server fixtures
+- Update documentation
+- Revise make docs success/failure status
+- poetry update
+- Update mkdocs libs
+- Isolate AWS Batch mock infrastructure and cleanup resources
+- Ignore some warnings from distutils
+- poetry update
+- Relax some dependency versions
+
