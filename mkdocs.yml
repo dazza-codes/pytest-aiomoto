@@ -1,0 +1,16 @@
+site_name: pytest-aiomoto
+site_description: pytest fixtures for aiobotocore services
+site_author: Darren Weber
+repo_url: https://github.com/dazza-codes/pytest-aiomoto
+
+nav:
+  - Home: index.md
+  - Code Reference:
+    - AioMoto Fixtures: aiomoto_fixtures.md
+
+theme:
+  name: "material"
+
+plugins:
+- search
+- mkdocstrings
