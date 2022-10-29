@@ -26,6 +26,7 @@ applied to my aio_aws project.
     - https://github.com/spulec/moto/pull/1197/files
     - https://github.com/spulec/moto/blob/master/tests/test_batch/test_batch.py
 """
+from functools import partial
 
 import pytest
 from aiobotocore.config import AioConfig
@@ -42,124 +43,124 @@ from pytest_aiomoto.utils import AWS_SECRET_ACCESS_KEY
 
 
 @pytest.fixture
-async def aio_aws_batch_server():
+async def aio_aws_batch_server() -> AioMotoService:
     """
-    AioMotoService("batch").endpoint_url
+    AioMotoService("batch")
     """
     async with AioMotoService("batch") as svc:
         svc.reset()
-        yield svc.endpoint_url
+        yield svc
         svc.reset()
 
 
 @pytest.fixture
-async def aio_aws_cloudformation_server():
+async def aio_aws_cloudformation_server() -> AioMotoService:
     """
-    AioMotoService("cloudformation").endpoint_url
+    AioMotoService("cloudformation")
     """
     async with AioMotoService("cloudformation") as svc:
         svc.reset()
-        yield svc.endpoint_url
+        yield svc
         svc.reset()
 
 
 @pytest.fixture
-async def aio_aws_ec2_server():
+async def aio_aws_ec2_server() -> AioMotoService:
     """
-    AioMotoService("ec2").endpoint_url
+    AioMotoService("ec2")
     """
     async with AioMotoService("ec2") as svc:
         svc.reset()
-        yield svc.endpoint_url
+        yield svc
         svc.reset()
 
 
 @pytest.fixture
-async def aio_aws_ecs_server():
+async def aio_aws_ecs_server() -> AioMotoService:
     """
-    AioMotoService("ecs").endpoint_url
+    AioMotoService("ecs")
     """
     async with AioMotoService("ecs") as svc:
         svc.reset()
-        yield svc.endpoint_url
+        yield svc
         svc.reset()
 
 
 @pytest.fixture
-async def aio_aws_iam_server():
+async def aio_aws_iam_server() -> AioMotoService:
     """
-    AioMotoService("iam").endpoint_url
+    AioMotoService("iam")
     """
     async with AioMotoService("iam") as svc:
         svc.reset()
-        yield svc.endpoint_url
+        yield svc
         svc.reset()
 
 
 @pytest.fixture
-async def aio_aws_dynamodb2_server():
+async def aio_aws_dynamodb2_server() -> AioMotoService:
     """
-    AioMotoService("dynamodb2").endpoint_url
+    AioMotoService("dynamodb2")
     """
     async with AioMotoService("dynamodb2") as svc:
         svc.reset()
-        yield svc.endpoint_url
+        yield svc
         svc.reset()
 
 
 @pytest.fixture
-async def aio_aws_lambda_server():
+async def aio_aws_lambda_server() -> AioMotoService:
     """
-    AioMotoService("lambda").endpoint_url
+    AioMotoService("lambda")
     """
     async with AioMotoService("lambda") as svc:
         svc.reset()
-        yield svc.endpoint_url
+        yield svc
         svc.reset()
 
 
 @pytest.fixture
-async def aio_aws_logs_server():
+async def aio_aws_logs_server() -> AioMotoService:
     """
-    AioMotoService("logs").endpoint_url
+    AioMotoService("logs")
     """
     # cloud watch logs
     async with AioMotoService("logs") as svc:
         svc.reset()
-        yield svc.endpoint_url
+        yield svc
         svc.reset()
 
 
 @pytest.fixture
-async def aio_aws_s3_server():
+async def aio_aws_s3_server() -> AioMotoService:
     """
-    AioMotoService("s3").endpoint_url
+    AioMotoService("s3")
     """
     async with AioMotoService("s3") as svc:
         svc.reset()
-        yield svc.endpoint_url
+        yield svc
         svc.reset()
 
 
 @pytest.fixture
-async def aio_aws_sns_server():
+async def aio_aws_sns_server() -> AioMotoService:
     """
-    AioMotoService("sns").endpoint_url
+    AioMotoService("sns")
     """
     async with AioMotoService("sns") as svc:
         svc.reset()
-        yield svc.endpoint_url
+        yield svc
         svc.reset()
 
 
 @pytest.fixture
-async def aio_aws_sqs_server():
+async def aio_aws_sqs_server() -> AioMotoService:
     """
-    AioMotoService("sqs").endpoint_url
+    AioMotoService("sqs")
     """
     async with AioMotoService("sqs") as svc:
         svc.reset()
-        yield svc.endpoint_url
+        yield svc
         svc.reset()
 
 
@@ -213,10 +214,10 @@ def aio_aws_client(aio_aws_session):
 @pytest.fixture
 async def aio_aws_batch_client(aio_aws_session, aio_aws_batch_server):
     """
-    AWS Async Client for AioMotoService("batch").endpoint_url
+    AWS Async Client for AioMotoService("batch")
     """
     async with aio_aws_session.create_client(
-        "batch", endpoint_url=aio_aws_batch_server
+        "batch", endpoint_url=aio_aws_batch_server.endpoint_url
     ) as client:
         yield client
     moto_service_reset("batch")
@@ -225,10 +226,10 @@ async def aio_aws_batch_client(aio_aws_session, aio_aws_batch_server):
 @pytest.fixture
 async def aio_aws_ec2_client(aio_aws_session, aio_aws_ec2_server):
     """
-    AWS Async Client for AioMotoService("ec2").endpoint_url
+    AWS Async Client for AioMotoService("ec2")
     """
     async with aio_aws_session.create_client(
-        "ec2", endpoint_url=aio_aws_ec2_server
+        "ec2", endpoint_url=aio_aws_ec2_server.endpoint_url
     ) as client:
         yield client
     moto_service_reset("ec2")
@@ -237,10 +238,10 @@ async def aio_aws_ec2_client(aio_aws_session, aio_aws_ec2_server):
 @pytest.fixture
 async def aio_aws_ecs_client(aio_aws_session, aio_aws_ecs_server):
     """
-    AWS Async Client for AioMotoService("ecs").endpoint_url
+    AWS Async Client for AioMotoService("ecs")
     """
     async with aio_aws_session.create_client(
-        "ecs", endpoint_url=aio_aws_ecs_server
+        "ecs", endpoint_url=aio_aws_ecs_server.endpoint_url
     ) as client:
         yield client
     moto_service_reset("ecs")
@@ -249,10 +250,10 @@ async def aio_aws_ecs_client(aio_aws_session, aio_aws_ecs_server):
 @pytest.fixture
 async def aio_aws_iam_client(aio_aws_session, aio_aws_iam_server):
     """
-    AWS Async Client for AioMotoService("iam").endpoint_url
+    AWS Async Client for AioMotoService("iam")
     """
     async with aio_aws_session.create_client(
-        "iam", endpoint_url=aio_aws_iam_server
+        "iam", endpoint_url=aio_aws_iam_server.endpoint_url
     ) as client:
         client.meta.config.region_name = "aws-global"  # not AWS_REGION
         yield client
@@ -262,10 +263,10 @@ async def aio_aws_iam_client(aio_aws_session, aio_aws_iam_server):
 @pytest.fixture
 async def aio_aws_lambda_client(aio_aws_session, aio_aws_lambda_server):
     """
-    AWS Async Client for AioMotoService("lambda").endpoint_url
+    AWS Async Client for AioMotoService("lambda")
     """
     async with aio_aws_session.create_client(
-        "lambda", endpoint_url=aio_aws_lambda_server
+        "lambda", endpoint_url=aio_aws_lambda_server.endpoint_url
     ) as client:
         yield client
     moto_service_reset("lambda")
@@ -274,10 +275,10 @@ async def aio_aws_lambda_client(aio_aws_session, aio_aws_lambda_server):
 @pytest.fixture
 async def aio_aws_logs_client(aio_aws_session, aio_aws_logs_server):
     """
-    AWS Async Client for AioMotoService("logs").endpoint_url
+    AWS Async Client for AioMotoService("logs")
     """
     async with aio_aws_session.create_client(
-        "logs", endpoint_url=aio_aws_logs_server
+        "logs", endpoint_url=aio_aws_logs_server.endpoint_url
     ) as client:
         yield client
     moto_service_reset("logs")
@@ -286,16 +287,17 @@ async def aio_aws_logs_client(aio_aws_session, aio_aws_logs_server):
 @pytest.fixture
 async def aio_aws_s3_client(aio_aws_session, aio_aws_s3_server, mocker):
     """
-    AWS Async Client for AioMotoService("s3").endpoint_url
+    AWS Async Client for AioMotoService("s3")
     """
     async with aio_aws_session.create_client(
-        "s3", endpoint_url=aio_aws_s3_server
+        "s3", endpoint_url=aio_aws_s3_server.endpoint_url
     ) as client:
         # TODO: find a way to apply this method mock only for creating "s3" clients;
-        # # ensure the session returns the mock s3 client
-        # mocker.patch.object(
-        #     aiobotocore.session.AioClientCreator, "create_client",
-        #     return_value=client
+        # mocker.patch(
+        #     "aiobotocore.session.AioSession.create_client",
+        #     side_effect=partial(
+        #         aio_aws_session.create_client, "s3", endpoint_url=aio_aws_s3_server.endpoint_url
+        #     )
         # )
         yield client
     moto_service_reset("s3")
