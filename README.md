@@ -55,7 +55,7 @@ practices.  Once you clone your fork of the repository:
     make init
     make test
 
-It's recommended that development use python 3.7, to avoid introducing any python
+It's recommended that development use python 3.8, to avoid introducing any python
 code that might not be compatible with the minimum version of python supported.  This
 is important in the context of the general evolution of asyncio in python.
 

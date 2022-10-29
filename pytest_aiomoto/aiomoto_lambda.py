@@ -39,9 +39,9 @@ def aws_lambda_zip() -> bytes:
 @pytest.fixture
 def aws_lambda_python_runtime() -> str:
     """
-    The python3.7 runtime for AWS Lambda.
+    The python3.8 runtime for AWS Lambda.
     """
-    return "python3.7"
+    return "python3.8"
 
 
 @pytest_asyncio.fixture
