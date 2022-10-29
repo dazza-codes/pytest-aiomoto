@@ -1,6 +1,12 @@
 name: Python - Test
 
-on: [push]
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
   test:
@@ -10,8 +16,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.7", "3.8"]
-#        python-version: ["3.7", "3.8", "3.9", "3.10"]
+        python-version: ["3.8", "3.9", "3.10"]
 
     steps:
     - uses: actions/checkout@v2
@@ -24,7 +29,6 @@ jobs:
     - name: Install poetry
       run: |
         mkdir -p /opt/cache
-        mkdir -p /opt/poetry
         curl -sSL https://install.python-poetry.org | python -
         export PATH="${HOME}/.local/bin:${PATH}"
         python -m pip install --upgrade pip
