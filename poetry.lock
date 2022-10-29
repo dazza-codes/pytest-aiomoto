@@ -108,17 +108,6 @@ typing-extensions = {version = ">=3.10", markers = "python_version < \"3.10\""}
 wrapt = ">=1.11,<2"
 
 [[package]]
-name = "astunparse"
-version = "1.6.3"
-description = "An AST unparser for Python"
-category = "main"
-optional = true
-python-versions = "*"
-
-[package.dependencies]
-six = ">=1.6.1,<2.0"
-
-[[package]]
 name = "async-timeout"
 version = "4.0.2"
 description = "Timeout context manager for asyncio programs"
@@ -662,6 +651,20 @@ optional = false
 python-versions = ">=3.6,<4"
 
 [[package]]
+name = "griffe"
+version = "0.22.0"
+description = "Signatures for entire Python programs. Extract the structure, the frame, the skeleton of your project, to generate API documentation or find breaking changes in your API."
+category = "main"
+optional = true
+python-versions = ">=3.7"
+
+[package.dependencies]
+cached-property = {version = "*", markers = "python_version < \"3.8\""}
+
+[package.extras]
+async = ["aiofiles (>=0.7,<1.0)"]
+
+[[package]]
 name = "identify"
 version = "2.5.1"
 description = "File identification library for Python"
@@ -1180,20 +1183,37 @@ python-versions = ">=3.6"
 
 [[package]]
 name = "mkdocstrings"
-version = "0.16.2"
+version = "0.19.0"
 description = "Automatic documentation from sources, for MkDocs."
 category = "main"
 optional = true
-python-versions = ">=3.6"
+python-versions = ">=3.7"
 
 [package.dependencies]
-Jinja2 = ">=2.11.1,<4.0"
-Markdown = ">=3.3,<4.0"
-MarkupSafe = ">=1.1,<3.0"
-mkdocs = ">=1.2,<2.0"
-mkdocs-autorefs = ">=0.1,<0.4"
-pymdown-extensions = ">=6.3,<10.0"
-pytkdocs = ">=0.2.0,<0.13.0"
+Jinja2 = ">=2.11.1"
+Markdown = ">=3.3"
+MarkupSafe = ">=1.1"
+mkdocs = ">=1.2"
+mkdocs-autorefs = ">=0.3.1"
+mkdocstrings-python = {version = ">=0.5.2", optional = true, markers = "extra == \"python\""}
+pymdown-extensions = ">=6.3"
+
+[package.extras]
+crystal = ["mkdocstrings-crystal (>=0.3.4)"]
+python = ["mkdocstrings-python (>=0.5.2)"]
+python-legacy = ["mkdocstrings-python-legacy (>=0.2.1)"]
+
+[[package]]
+name = "mkdocstrings-python"
+version = "0.7.1"
+description = "A Python handler for mkdocstrings."
+category = "main"
+optional = true
+python-versions = ">=3.7"
+
+[package.dependencies]
+griffe = ">=0.11.1"
+mkdocstrings = ">=0.19"
 
 [[package]]
 name = "moto"
@@ -1945,22 +1965,6 @@ pycrypto = ["pycrypto (>=2.6.0,<2.7.0)", "pyasn1"]
 pycryptodome = ["pycryptodome (>=3.3.1,<4.0.0)", "pyasn1"]
 
 [[package]]
-name = "pytkdocs"
-version = "0.12.0"
-description = "Load Python objects documentation."
-category = "main"
-optional = true
-python-versions = ">=3.6.1"
-
-[package.dependencies]
-astunparse = {version = ">=1.6,<2.0", markers = "python_version < \"3.9\""}
-cached-property = {version = ">=1.5,<2.0", markers = "python_version < \"3.8\""}
-typing-extensions = {version = ">=3.7,<4.0", markers = "python_version < \"3.8\""}
-
-[package.extras]
-numpy-style = ["docstring_parser (>=0.7,<1.0)"]
-
-[[package]]
 name = "pytz"
 version = "2022.1"
 description = "World timezone definitions, modern and historical"
@@ -2691,7 +2695,7 @@ s3fs = ["s3fs"]
 [metadata]
 lock-version = "1.1"
 python-versions = ">=3.7.1,<4.0.0"
-content-hash = "6160b7b3fdf650857a9eaed4edc332d166309bebddc19163d334b06497c6889f"
+content-hash = "05ef00bbd6c897ecb1870ba065f621ce1d6ea6c4c5c210239271ae37c9fa2e24"
 
 [metadata.files]
 aiobotocore = []
@@ -2709,7 +2713,6 @@ appnope = [
 ]
 asciitree = []
 astroid = []
-astunparse = []
 async-timeout = [
     {file = "async-timeout-4.0.2.tar.gz", hash = "sha256:2163e1640ddb52b7a8c80d0a67a08587e5d245cc9c553a74a847056bc2976b15"},
     {file = "async_timeout-4.0.2-py3-none-any.whl", hash = "sha256:8ca1e4fcf50d07413d66d1a5e416e42cfdf5851c981d679a09851a6853383b3c"},
@@ -2987,6 +2990,7 @@ graphql-core = [
     {file = "graphql-core-3.2.1.tar.gz", hash = "sha256:9d1bf141427b7d54be944587c8349df791ce60ade2e3cccaf9c56368c133c201"},
     {file = "graphql_core-3.2.1-py3-none-any.whl", hash = "sha256:f83c658e4968998eed1923a2e3e3eddd347e005ac0315fbb7ca4d70ea9156323"},
 ]
+griffe = []
 identify = [
     {file = "identify-2.5.1-py2.py3-none-any.whl", hash = "sha256:0dca2ea3e4381c435ef9c33ba100a78a9b40c0bab11189c7cf121f75815efeaa"},
     {file = "identify-2.5.1.tar.gz", hash = "sha256:3d11b16f3fe19f52039fb7e39c9c884b21cb1b586988114fbe42671f03de3e82"},
@@ -3195,6 +3199,7 @@ mkdocs-autorefs = []
 mkdocs-material = []
 mkdocs-material-extensions = []
 mkdocstrings = []
+mkdocstrings-python = []
 moto = []
 multidict = [
     {file = "multidict-6.0.2-cp310-cp310-macosx_10_9_universal2.whl", hash = "sha256:0b9e95a740109c6047602f4db4da9949e6c5945cefbad34a1299775ddc9a62e2"},
@@ -3518,7 +3523,6 @@ python-jose = [
     {file = "python-jose-3.3.0.tar.gz", hash = "sha256:55779b5e6ad599c6336191246e95eb2293a9ddebd555f796a65f838f07e5d78a"},
     {file = "python_jose-3.3.0-py2.py3-none-any.whl", hash = "sha256:9b1376b023f8b298536eedd47ae1089bcdb848f1535ab30555cd92002d78923a"},
 ]
-pytkdocs = []
 pytz = [
     {file = "pytz-2022.1-py2.py3-none-any.whl", hash = "sha256:e68985985296d9a66a881eb3193b0906246245294a881e7c8afe623866ac6a5c"},
     {file = "pytz-2022.1.tar.gz", hash = "sha256:1e760e2fe6a8163bc0b3d9a19c4f84342afa0a2affebfaa84b01b978a02ecaa7"},
