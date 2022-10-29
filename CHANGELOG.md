@@ -67,3 +67,11 @@ Initial implementation for pytest-aiomoto fixtures
 - poetry update
 - Relax some dependency versions
 
+
+0.6.0 (2022-10-28)
+------------------
+- drop python 3.7 support
+- update pytest-asyncio 0.20
+- update aiofiles 22.x
+- update moto 4.x
+
