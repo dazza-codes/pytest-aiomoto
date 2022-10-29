@@ -35,24 +35,6 @@ from pytest_aiomoto.aws_batch_models import AWSBatchJobStates
 from pytest_aiomoto.utils import response_success
 
 
-@pytest.fixture
-async def aio_aws_batch_infrastructure(
-    aio_aws_batch_clients: AioAwsBatchClients,
-    compute_env_name: str,
-    job_queue_name: str,
-    job_definition_name: str,
-) -> AioAwsBatchInfrastructure:
-    aws_region = aio_aws_batch_clients.region
-    aws_resources = await aio_batch_infrastructure(
-        aio_aws_batch_clients,
-        aws_region,
-        compute_env_name,
-        job_queue_name,
-        job_definition_name,
-    )
-    return aws_resources
-
-
 @pytest.mark.asyncio
 async def test_aws_batch_infrastructure(
     aio_aws_batch_infrastructure: AioAwsBatchInfrastructure,
