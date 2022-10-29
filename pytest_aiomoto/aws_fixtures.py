@@ -312,7 +312,7 @@ def s3_bucket_name() -> str:
 
     :return: str for the bucket component of 's3://{bucket}/{key}'
     """
-    return "moto-bucket-" + str(uuid.uuid4())
+    return f"moto-bucket-{uuid.uuid4()}"
 
 
 @pytest.fixture
