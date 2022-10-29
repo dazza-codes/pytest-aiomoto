@@ -33,3 +33,15 @@ Initial implementation for pytest-aiomoto fixtures
 - Fix reset for moto.service backends
 - Relax dependencies
 
+
+0.4.0 (2022-03-12)
+------------------
+- Refactor AioMotoService
+- Refactor moto fixtures into separate modules
+- Add mock fixtures for AWS credentials
+- Enhance aws fixtures
+- Add python 3.8 to github test matrix
+- Revise make test command details
+- Add pytest.ini markers
+- Relax dependency versions
+

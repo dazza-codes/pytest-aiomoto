@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pytest-aiomoto"
-version = "0.3.1"
+version = "0.4.0"
 description = "pytest-aiomoto"
 authors = [
     "Darren Weber <dazza-codes@github.com>",
