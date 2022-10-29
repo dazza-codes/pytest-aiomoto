@@ -75,3 +75,9 @@ Initial implementation for pytest-aiomoto fixtures
 - update aiofiles 22.x
 - update moto 4.x
 
+
+0.6.1 (2022-10-28)
+------------------
+- Bump python 3.7 to 3.8 - various
+- Update readthedocs python version
+
