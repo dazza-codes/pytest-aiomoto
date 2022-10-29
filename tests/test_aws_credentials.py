@@ -18,6 +18,16 @@ import boto3.session
 import botocore.credentials
 import botocore.session
 
+from pytest_aiomoto.utils import AWS_ACCESS_KEY_ID
+from pytest_aiomoto.utils import AWS_SECRET_ACCESS_KEY
+
+
+def test_aws_credentials(aws_credentials):
+    assert os.getenv("AWS_ACCESS_KEY_ID")
+    assert os.getenv("AWS_SECRET_ACCESS_KEY")
+    assert os.getenv("AWS_ACCESS_KEY_ID") == AWS_ACCESS_KEY_ID
+    assert os.getenv("AWS_SECRET_ACCESS_KEY") == AWS_SECRET_ACCESS_KEY
+
 
 def test_aws_default_credentials(default_profile, mock_default_credentials):
     assert os.getenv("AWS_DEFAULT_PROFILE") == "default"

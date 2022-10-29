@@ -12,14 +12,24 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# pylint: disable=line-too-long
-# fmt: off
-"""
-A version module managed by the invoke-release task
+import uuid
 
-See also tasks.py
-"""
+import pytest
 
-__version_info__ = (0, 3, 1)
-__version__ = '-'.join(filter(None, ['.'.join(map(str, __version_info__[:3])), (__version_info__[3:] or [None])[0]]))
-# fmt: on
+
+@pytest.fixture
+def aws_cognito_pool(cognito_moto_client, aws_region):
+    name = str(uuid.uuid4())
+    value = str(uuid.uuid4())
+    response = cognito_moto_client.create_user_pool(
+        PoolName=name, LambdaConfig={"PreSignUp": value}
+    )
+    yield response
+
+
+@pytest.fixture
+def aws_cognito_pool_client(cognito_moto_client, cognito_moto_pool):
+    user_pool_id = cognito_moto_pool["UserPool"]["Id"]
+    yield cognito_moto_client.create_user_pool_client(
+        UserPoolId=user_pool_id, ClientName=str(uuid.uuid4())
+    )
