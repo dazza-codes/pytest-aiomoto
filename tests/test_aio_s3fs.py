@@ -1,51 +1,21 @@
-from functools import partial
+# Copyright 2021 Darren Weber
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# To see moto-server logs
+# pytest -s -p no:logging tests/test_aio_s3fs.py
 
 import pytest
-
-# NOTE: S3FileSystem is very hard to patch completely; keeping these
-#       attempts in this comment, although they did not work
-# s3fs.S3FileSystem.clear_instance_cache()
-# s3_file_system = s3fs.S3FileSystem(
-#     anon=True,
-#     client_kwargs={
-#         "endpoint_url": s3_endpoint_url,
-#         "region_name": aws_region
-#     },
-#     loop=event_loop,
-#     asynchronous=True,
-#     session=aio_aws_session
-# )
-# s3_file_system.invalidate_cache()
-# s3_file_system._s3 = aio_aws_s3_client
-# await s3_file_system.set_session()
-# s3fs_patch = mocker.patch("s3fs.core.S3FileSystem")
-# s3fs_patch.return_value = s3_file_system
-
-
-@pytest.fixture()
-def aio_s3fs(
-    aio_aws_session,
-    aio_aws_s3_server,
-    mocker,
-    monkeypatch,
-):
-    import s3fs
-
-    try:
-        monkeypatch.setenv("S3_ENDPOINT_URL", aio_aws_s3_server)
-        mocker.patch(
-            "aiobotocore.session.AioSession.create_client",
-            new=partial(
-                aio_aws_session.create_client, "s3", endpoint_url=aio_aws_s3_server
-            )
-        )
-        s3fs.S3FileSystem.clear_instance_cache()
-
-        yield
-
-    finally:
-        s3fs.S3FileSystem.clear_instance_cache()
-        monkeypatch.delenv("S3_ENDPOINT_URL", raising=False)
 
 
 @pytest.mark.asyncio
