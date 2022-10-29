@@ -21,3 +21,9 @@ Initial implementation for pytest-aiomoto fixtures
 - Use a UUID for any moto bucket name
 - Add dev libs to test s3fs/pandas/xarray/zarr
 
+
+0.3.0 (2022-02-23)
+------------------
+- Update moto 3.x
+- Extract aiomoto utils for AWS Batch
+
