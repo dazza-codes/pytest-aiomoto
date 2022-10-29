@@ -27,3 +27,9 @@ Initial implementation for pytest-aiomoto fixtures
 - Update moto 3.x
 - Extract aiomoto utils for AWS Batch
 
+
+0.3.1 (2022-03-12)
+------------------
+- Fix reset for moto.service backends
+- Relax dependencies
+
