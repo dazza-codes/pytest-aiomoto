@@ -5,7 +5,14 @@ version: 0.3.1
 [pytest](https://docs.pytest.org) fixtures for AWS services,
 with support for asyncio fixtures using [aiobotocore](https://aiobotocore.readthedocs.io)
 
-## Warning
+This project attempts to provide some common fixtures for commonly used
+services.  As such, it is not a generic package for any services; the
+moto project provides that and this project builds on that.  This
+project aims to create some useful fixtures that behave nearly the
+same way for both synchronous clients (botocore) and
+asynchronous clients (aiobotocore).
+
+## Warnings
 
 - This package is work in progress, it is not recommended for production purposes.
   During the initial phases of this project, it is likely that some releases
@@ -30,10 +37,3 @@ You can install "pytest-aiomoto" via pip
 To list the available fixtures
 
     $ pytest --fixtures
-
-This project attempts to provide some common fixtures for commonly used
-services.  As such, it is not a generic package for any services; the
-moto project provides that and this project builds on that.  This
-project aims to create some useful fixtures that behave nearly the
-same way for both synchronous clients (botocore) and
-asynchronous clients (aiobotocore).

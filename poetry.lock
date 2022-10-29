@@ -2505,7 +2505,7 @@ s3fs = ["s3fs"]
 [metadata]
 lock-version = "1.1"
 python-versions = ">=3.7.1,<4.0.0"
-content-hash = "77e753baab45b81ebe3c1af30dab4385dd860f0c066a83aca717da311b05f48e"
+content-hash = "137324998256d2ac1b56ff24329ee989a87187c79c841ee55d654c1820798032"
 
 [metadata.files]
 aiobotocore = [
