@@ -1,4 +1,4 @@
-# Copyright 2019-2021 Darren Weber
+# Copyright 2019-2022 Darren Weber
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -43,6 +43,7 @@ async def test_aws_batch_infrastructure(
     assert infrastructure.subnet_id
     assert infrastructure.security_group_id
     assert infrastructure.iam_role_arn
+    assert infrastructure.iam_role_name
     assert infrastructure.compute_env_name
     assert infrastructure.compute_env_arn
     assert infrastructure.job_queue_name
