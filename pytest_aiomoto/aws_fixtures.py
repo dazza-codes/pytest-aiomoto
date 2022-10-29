@@ -35,6 +35,7 @@ from typing import Optional
 import boto3
 import botocore.waiter
 import pytest
+from botocore.client import BaseClient
 from botocore.exceptions import ClientError
 from moto import mock_batch
 from moto import mock_ec2
@@ -545,12 +546,32 @@ def s3_temp_1000s_objects(
 #
 
 
+class BatchClient(BaseClient):
+    pass
+
+
+class EC2Client(BaseClient):
+    pass
+
+
+class ECSClient(BaseClient):
+    pass
+
+
+class IAMClient(BaseClient):
+    pass
+
+
+class CloudWatchLogsClient(BaseClient):
+    pass
+
+
 class AwsBatchClients(NamedTuple):
-    batch: "botocore.client.Batch"
-    ec2: "botocore.client.EC2"
-    ecs: "botocore.client.ECS"
-    iam: "botocore.client.IAM"
-    logs: "botocore.client.CloudWatchLogs"
+    batch: BatchClient
+    ec2: EC2Client
+    ecs: ECSClient
+    iam: IAMClient
+    logs: CloudWatchLogsClient
     region: str
 
 
