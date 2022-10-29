@@ -32,7 +32,6 @@ jobs:
 #    - name: Install poetry
 #      run: |
 #        mkdir -p /opt/cache
-#        mkdir -p /opt/poetry
 #        curl -sSL https://install.python-poetry.org | python -
 #        export PATH="${HOME}/.local/bin:${PATH}"
 #        python -m pip install --upgrade pip
