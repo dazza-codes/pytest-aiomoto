@@ -66,7 +66,7 @@ package-publish: package-check
 .PHONY: poetry
 poetry:
 	@if ! command -v poetry > /dev/null; then \
-        curl -sSL https://install.python-poetry.org | python -
+		curl -sSL https://install.python-poetry.org | python -
 	fi
 	if ! echo "$PATH" | grep -Eq "(^|:)${HOME}/.local/bin($|:)" ; then \
 		export PATH="${HOME}/.local/bin:${PATH}"; \
