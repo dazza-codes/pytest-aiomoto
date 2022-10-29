@@ -28,11 +28,26 @@ from pytest_aiomoto.utils import response_success
 
 @pytest.fixture
 def aws_lambda_zip() -> bytes:
+    """
+    A ZIP archive to create an AWS Lambda function
+    from the :py:func:`aws_lambda_src` function.
+    """
     return zip_lambda(aws_lambda_src())
 
 
 @pytest.fixture
+def aws_lambda_python_runtime() -> str:
+    """
+    The python3.7 runtime for AWS Lambda.
+    """
+    return "python3.7"
+
+
+@pytest.fixture
 async def lambda_iam_role(aio_aws_iam_client):
+    """
+    An IAM role to create an AWS Lambda function
+    """
     try:
         response = await aio_aws_iam_client.get_role(RoleName="my-role")
         return response["Role"]["Arn"]
@@ -47,14 +62,17 @@ async def lambda_iam_role(aio_aws_iam_client):
 
 @pytest.fixture
 async def aws_lambda_func(
-    aws_lambda_zip, lambda_iam_role, aio_aws_lambda_client
+    aws_lambda_zip, lambda_iam_role, aws_lambda_python_runtime, aio_aws_lambda_client
 ) -> str:
+    """
+    Create an AWS Lambda function and return the function name 'lambda_dev'.
+    """
 
     func = "lambda_dev"
 
     response = await aio_aws_lambda_client.create_function(
         FunctionName=func,
-        Runtime="python3.7",
+        Runtime=aws_lambda_python_runtime,
         Handler="lambda_function.lambda_handler",
         Code={"ZipFile": aws_lambda_zip},
         Role=lambda_iam_role,
