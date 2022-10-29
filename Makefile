@@ -35,7 +35,7 @@ init: poetry
 	@poetry env info
 	[[ -f pip.conf ]] && cp pip.conf $$(poetry env info -p)
 	poetry run python -m pip install --upgrade pip
-	poetry install -v --no-interaction --extras docs
+	poetry install -v --no-interaction --extras docs --extras s3fs
 
 .PHONY: lint
 lint: clean
