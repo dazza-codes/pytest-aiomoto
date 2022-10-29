@@ -21,11 +21,17 @@ from pytest_aiomoto.utils import response_success
 
 
 @pytest.fixture
-def aio_s3_bucket_name() -> str:
+def aio_s3_uuid() -> str:
+    """A UUID for S3 artifacts"""
+    return str(uuid.uuid4())
+
+
+@pytest.fixture
+def aio_s3_bucket_name(aio_s3_uuid) -> str:
     """A valid S3 bucket name
     :return: str for the bucket component of 's3://{bucket}/{key}'
     """
-    return f"aio-moto-bucket-{uuid.uuid4()}"
+    return f"aio-moto-bucket-{aio_s3_uuid}"
 
 
 @pytest.fixture

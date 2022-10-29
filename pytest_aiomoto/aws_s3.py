@@ -196,7 +196,13 @@ def s3_protocol() -> str:
 
 
 @pytest.fixture
-def s3_bucket_name() -> str:
+def s3_uuid() -> str:
+    """A UUID for S3 artifacts"""
+    return str(uuid.uuid4())
+
+
+@pytest.fixture
+def s3_bucket_name(s3_uuid) -> str:
     """
     A valid S3 bucket name with a UUID suffix.
 
@@ -206,7 +212,7 @@ def s3_bucket_name() -> str:
 
     :return: str for the bucket component of 's3://{bucket}/{key}'
     """
-    return f"moto-bucket-{uuid.uuid4()}"
+    return f"moto-bucket-{s3_uuid}"
 
 
 @pytest.fixture
@@ -320,11 +326,6 @@ def s3_uri_object(
         )
         yield S3Object(bucket=s3_bucket_name, key=s3_key)
         delete_s3_bucket(s3_bucket_name, aws_s3_client)
-
-
-@pytest.fixture
-def s3_uuid() -> str:
-    return str(uuid.uuid4())
 
 
 @pytest.fixture
