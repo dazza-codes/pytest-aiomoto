@@ -49,7 +49,7 @@ pytest-asyncio = "^0.14.0"
 
 # Try to update to the latest aiobotocore
 aiobotocore = {version = "^2.0.0", extras = ["boto3"]}
-moto = {version = "^2.0.0", extras = ["all","server"]}
+moto = {version = "^3.0.0", extras = ["all","server"]}
 
 aiofiles = {version = "^0.7.0"}
 requests = "^2.23.0"
