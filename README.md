@@ -1,5 +1,6 @@
 # pytest-aiomoto
 
+[![Build Status](https://github.com/dazza-codes/pytest-aiomoto/actions/workflows/python-test.yml/badge.svg)](https://github.com/dazza-codes/pytest-aiomoto/actions/workflows/python-test.yml)
 [![Documentation Status](https://readthedocs.org/projects/pytest-aiomoto/badge/?version=latest)](https://pytest-aiomoto.readthedocs.io/en/latest/?badge=latest)
 
 [![PyPI version](https://img.shields.io/pypi/v/pytest-aiomoto.svg)](https://pypi.org/project/pytest-aiomoto)
