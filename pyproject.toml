@@ -42,7 +42,7 @@ packages = [
 
 
 [tool.poetry.dependencies]
-python = "^3.7"
+python = ">=3.7.1,<4.0.0"
 
 pytest = "^6.2.5"
 pytest-asyncio = "^0.14.0"
@@ -73,6 +73,8 @@ docs = [
 # py-dev-deps is used as a common denominator for many
 # development dependencies
 py-dev-deps = "^0.2"
+pandas = "^1.3.4"
+zarr = "^2.10.3"
 
 
 [tool.isort]
