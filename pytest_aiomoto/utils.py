@@ -11,9 +11,13 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+import os
 import socket
 from typing import Dict
 
+import boto3.session
+import pytest
+from botocore.exceptions import ProfileNotFound
 from moto.core.models import BotocoreStubber
 
 AWS_HOST = "127.0.0.1"
@@ -28,6 +32,15 @@ def assert_status_code(response, status_code: int):
     assert (
         int(response.get("ResponseMetadata", {}).get("HTTPStatusCode")) == status_code
     )
+
+
+def check_credentials():
+    try:
+        profile = os.getenv("AWS_DEFAULT_PROFILE")
+        _session = boto3.session.Session(profile_name=profile)
+    except ProfileNotFound:
+        # Exit for users without the credentials
+        pytest.skip("Missing AWS credentials, skipping test")
 
 
 def get_free_tcp_port(release_socket: bool = False):
