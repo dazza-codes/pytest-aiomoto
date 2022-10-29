@@ -5,7 +5,7 @@ SHELL = /bin/bash
 .ONESHELL:
 .SUFFIXES:
 
-LIB = aiomoto
+LIB = pytest_aiomoto
 
 .PHONY: clean
 clean:
@@ -46,13 +46,7 @@ lint: clean
 
 .PHONY: test
 test: clean
-	@poetry run pytest \
-		--durations=10 \
-		--show-capture=no \
-		--cov-config .coveragerc \
-		--cov-report html \
-		--cov-report term \
-		--cov=$(LIB) tests
+	@poetry run coverage run --source=$(LIB) -m pytest && poetry run coverage report
 
 .PHONY: typehint
 typehint: clean
