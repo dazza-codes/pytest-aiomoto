@@ -13,7 +13,7 @@
 # limitations under the License.
 
 """
-Test MotoService
+Test AioMotoService
 
 Test the aiohttp wrappers on moto.server, which run moto.server in a
 thread for each service (batch, s3, etc), using async/await wrappers
@@ -24,20 +24,20 @@ import json
 import aiohttp
 import pytest
 
-from pytest_aiomoto.aiomoto_services import MotoService
+from pytest_aiomoto.aiomoto_services import AioMotoService
 from pytest_aiomoto.utils import AWS_HOST
 
 
 def test_moto_service():
-    # this instantiates a MotoService but does not start a server
-    service = MotoService("s3")
+    # this instantiates a AioMotoService but does not start a server
+    service = AioMotoService("s3")
     assert AWS_HOST in service.endpoint_url
     assert service._server is None
 
 
 @pytest.mark.asyncio
 async def test_moto_batch_service():
-    async with MotoService("batch") as batch_service:
+    async with AioMotoService("batch") as batch_service:
         assert batch_service._server  # __aenter__ starts a moto.server
         assert batch_service._main_app
         assert batch_service._main_app.app_instances["batch"]
@@ -56,7 +56,7 @@ async def test_moto_batch_service():
 
 @pytest.mark.asyncio
 async def test_moto_s3_service():
-    async with MotoService("s3") as s3_service:
+    async with AioMotoService("s3") as s3_service:
         assert s3_service._server  # __aenter__ starts a moto.server
         assert s3_service._main_app
         assert s3_service._main_app.app_instances["s3"]
@@ -77,7 +77,7 @@ async def test_moto_s3_service():
 # @pytest.mark.asyncio
 # async def test_moto_api_service():
 #     # The moto-api is a flask UI to view moto backends
-#     async with MotoService("moto_api") as moto_api_service:
+#     async with AioMotoService("moto_api") as moto_api_service:
 #         assert moto_api_service._server  # __aenter__ starts a moto.server
 #
 #         url = moto_api_service.endpoint_url + "/moto-api"
