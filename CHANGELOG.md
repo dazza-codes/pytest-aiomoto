@@ -87,3 +87,8 @@ Initial implementation for pytest-aiomoto fixtures
 - Revise aggressive cleanup for AWS credentials
 - Fix file permissions on pytest_aiomoto/aws_batch_models.py
 
+
+0.6.3 (2022-11-08)
+------------------
+- Update poetry build system and dev-deps
+
