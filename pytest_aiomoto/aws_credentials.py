@@ -80,7 +80,6 @@ def clean_aws_credentials(monkeypatch):
     monkeypatch.delenv("AWS_SHARED_CREDENTIALS_FILE", raising=False)
     monkeypatch.delenv("AWS_PROFILE", raising=False)
     monkeypatch.delenv("AWS_DEFAULT_PROFILE", raising=False)
-    monkeypatch.delenv("AWS_DEFAULT_REGION", raising=False)
     monkeypatch.delenv("AWS_ACCOUNT", raising=False)
     monkeypatch.delenv("AWS_ACCESS_KEY_ID", raising=False)
     monkeypatch.delenv("AWS_SECRET_ACCESS_KEY", raising=False)
