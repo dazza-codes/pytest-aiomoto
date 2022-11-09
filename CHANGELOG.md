@@ -81,3 +81,9 @@ Initial implementation for pytest-aiomoto fixtures
 - Bump python 3.7 to 3.8 - various
 - Update readthedocs python version
 
+
+0.6.2 (2022-11-08)
+------------------
+- Revise aggressive cleanup for AWS credentials
+- Fix file permissions on pytest_aiomoto/aws_batch_models.py
+
