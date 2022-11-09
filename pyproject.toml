@@ -70,7 +70,7 @@ docs = [
 
 s3fs = ["s3fs"]
 
-[tool.poetry.dev-dependencies]
+[tool.poetry.group.dev.dependencies]
 
 # py-dev-deps is used as a common denominator for many development dependencies
 py-dev-deps = "^0.5.0"
@@ -88,5 +88,5 @@ force_single_line = true
 
 
 [build-system]
-requires = ["poetry>=1.0"]
-build-backend = "poetry.masonry.api"
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
