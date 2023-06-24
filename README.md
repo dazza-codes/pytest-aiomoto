@@ -55,6 +55,8 @@ practices.  Once you clone your fork of the repository:
     make init
     make test
 
+On OSX, use `gmake` from Homebrew to get GNU make > 4.x.
+
 It's recommended that development use python 3.8, to avoid introducing any python
 code that might not be compatible with the minimum version of python supported.  This
 is important in the context of the general evolution of asyncio in python.
@@ -69,6 +71,21 @@ The expectation for contributions might be a slow process, please do not anticip
 any turn around on the order of days (unless you're already a core contributor).
 Using your own fork can be a faster way to evolve your fixtures for your use cases.
 
+## Release Versions
+
+Install [pipx](https://pypa.github.io/pipx/) and use it to install
+[versionner](https://msztolcman.github.io/versionner/).
+
+```shell
+pipx install versionner
+ver --help
+```
+
+With `pipx` and `versionner` installed, it can be used to manage releases
+for any python library.  See the documentation for `ver` for details on
+how to manage sem-ver library releases.  See `.versionner.rc` file for
+details of the project configuration.
+
 ## Issues
 
 If you encounter any problems, please
@@ -82,7 +99,7 @@ Distributed under the terms of the
 "pytest-aiomoto" is free and open source software.
 
 ```text
-Copyright 2021 Darren Weber
+Copyright 2019-2023 Darren Weber
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
