@@ -105,3 +105,10 @@ e378446 - poetry update <Darren Weber>
 38b2ba0 - Revise github workflow, add python 3.11 <Darren Weber>
 
 
+0.7.1 (2023-06-24)
+------------------
+795470c - Bump version 0.7.1 <Darren Weber>
+adce05f - Update package metadata, include python 3.11 <Darren Weber>
+
+
+
