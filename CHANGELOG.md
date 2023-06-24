@@ -92,3 +92,16 @@ Initial implementation for pytest-aiomoto fixtures
 ------------------
 - Update poetry build system and dev-deps
 
+
+0.7.0 (2023-06-24)
+------------------
+4d7e074 - Bump version 0.7.0 <Darren Weber>
+e8ba493 - Remove invoke-release tasks <Darren Weber>
+c5ac092 - Use versionner to manage releases <Darren Weber>
+80a5ab9 - Update copyright dates <Darren Weber>
+4c2e059 - Update make init recipe <Darren Weber>
+e378446 - poetry update <Darren Weber>
+41e0993 - Update libs; require s3fs with all extras for compatible AWS SDK libs <Darren Weber>
+38b2ba0 - Revise github workflow, add python 3.11 <Darren Weber>
+
+
