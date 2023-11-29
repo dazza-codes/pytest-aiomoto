@@ -49,7 +49,7 @@ pytest-asyncio = "^0.21"
 # Allow updates to the latest s3fs/aiobotocore and moto
 # Allow s3fs/aiobotcore to bundle compatible versions of botocore, boto3, and awscli;
 # see https://github.com/fsspec/s3fs/blob/main/setup.py
-s3fs = {version = "^2023.0", extras = ["awscli", "boto3"]}
+s3fs = {version = "^2023.0", extras = ["awscli", "boto3"], optional = true }
 moto = {version = "^4.0", extras = ["all","server"]}
 
 aiofiles = "^22.0"
@@ -67,6 +67,8 @@ docs = [
     "mkdocs-material",
     "mkdocstrings",
 ]
+
+s3fs = ["s3fs"]
 
 
 [tool.poetry.group.dev.dependencies]
