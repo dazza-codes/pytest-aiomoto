@@ -25,7 +25,6 @@ import boto3.session
 import botocore.session
 import pytest
 from botocore.exceptions import ProfileNotFound
-from s3fs import S3FileSystem
 
 from pytest_aiomoto.utils import AWS_ACCESS_KEY_ID
 from pytest_aiomoto.utils import AWS_REGION
@@ -75,7 +74,15 @@ def clean_aws_credentials(monkeypatch):
     # See https://github.com/dask/s3fs/issues/461 for details about
     # s3fs using an instance cache with stored credentials.
     boto3.DEFAULT_SESSION = None
-    S3FileSystem.clear_instance_cache()
+
+    try:
+        from s3fs import S3FileSystem
+    except ImportError:
+        # no s3fs, so nothing to clear
+        pass
+    else:
+        S3FileSystem.clear_instance_cache()
+
     monkeypatch.delenv("AWS_CONFIG_FILE", raising=False)
     monkeypatch.delenv("AWS_SHARED_CREDENTIALS_FILE", raising=False)
     monkeypatch.delenv("AWS_PROFILE", raising=False)
